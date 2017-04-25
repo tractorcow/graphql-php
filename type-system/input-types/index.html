@@ -7,32 +7,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   
-  
-  <title>Input Types - graphql-php</title>
-  
-
   <link rel="shortcut icon" href="../../img/favicon.ico">
-
-  
+  <title>Input Types - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
   <link rel="stylesheet" href="../../css/highlight.css">
-
   
   <script>
     // Current page data
     var mkdocs_page_name = "Input Types";
-    var mkdocs_page_input_path = "type-system\input-types.md";
+    var mkdocs_page_input_path = "type-system\\input-types.md";
     var mkdocs_page_url = "/type-system/input-types/";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js"></script>
   <script src="../../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
-  <script src="../../js/theme.js"></script> 
-
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
   
 </head>
 
@@ -52,143 +44,100 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        <ul class="current">
+	<ul class="current">
+	  
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../..">About</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">About</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../../getting-started/">Getting Started</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../../getting-started/">Getting Started</a>
+	    </li>
           
-            <li>
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type System</span>
     <ul class="subnav">
-    <li><span>Type System</span></li>
+                <li class="">
+                    
+    <a class="" href="../">Introduction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../object-types/">Object Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../scalar-types/">Scalar Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../enum-types/">Enumeration Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../lists-and-nonnulls/">Lists and Non-Null</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../interfaces/">Interfaces</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../unions/">Unions</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Input Types</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#about-input-and-output-types">About Input and Output Types</a></li>
+    
 
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../">Introduction</a>
-        
-    </li>
+    <li class="toctree-l3"><a href="#input-object-type">Input Object Type</a></li>
+    
 
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../object-types/">Object Types</a>
-        
-    </li>
+    <li class="toctree-l3"><a href="#configuration-options">Configuration options</a></li>
+    
 
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../scalar-types/">Scalar Types</a>
-        
-    </li>
+    <li class="toctree-l3"><a href="#using-input-object-type">Using Input Object Type</a></li>
+    
 
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../enum-types/">Enumeration Types</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../lists-and-nonnulls/">Lists and Non-Null</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../interfaces/">Interfaces</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../unions/">Unions</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Input Types</a>
-        
-            <ul>
-            
-                <li class="toctree-l3"><a href="#about-input-and-output-types">About Input and Output Types</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#input-object-type">Input Object Type</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#configuration-options">Configuration options</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#using-input-object-type">Using Input Object Type</a></li>
-                
-            
-            </ul>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../directives/">Directives</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../schema/">Schema</a>
-        
-    </li>
-
-        
     </ul>
-<li>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../directives/">Directives</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../schema/">Schema</a>
+                </li>
+    </ul>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../../executing-queries/">Executing Queries</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../../executing-queries/">Executing Queries</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../../data-fetching/">Fetching Data</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../../data-fetching/">Fetching Data</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../../error-handling/">Handling Errors</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../../error-handling/">Handling Errors</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../../complementary-tools/">Complementary Tools</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
           
         </ul>
       </div>
@@ -406,10 +355,10 @@ resolver as <code>$args['filters']</code></p>
       </div>
 
     </section>
-
+    
   </div>
 
-<div class="rst-versions" role="note" style="cursor: pointer">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
@@ -420,6 +369,7 @@ resolver as <code>$args['filters']</code></p>
       
     </span>
 </div>
+    <script src="../../js/theme.js"></script>
 
 </body>
 </html>

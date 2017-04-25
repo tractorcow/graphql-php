@@ -7,19 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   
-  
-  <title>Handling Errors - graphql-php</title>
-  
-
   <link rel="shortcut icon" href="../img/favicon.ico">
-
-  
+  <title>Handling Errors - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
   <link rel="stylesheet" href="../css/highlight.css">
-
   
   <script>
     // Current page data
@@ -30,9 +24,7 @@
   
   <script src="../js/jquery-2.1.1.min.js"></script>
   <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script>
-  <script src="../js/theme.js"></script> 
-
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
   
 </head>
 
@@ -52,143 +44,100 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        <ul class="current">
+	<ul class="current">
+	  
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="..">About</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="..">About</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../getting-started/">Getting Started</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../getting-started/">Getting Started</a>
+	    </li>
           
-            <li>
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type System</span>
     <ul class="subnav">
-    <li><span>Type System</span></li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/">Introduction</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/object-types/">Object Types</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/scalar-types/">Scalar Types</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/enum-types/">Enumeration Types</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/lists-and-nonnulls/">Lists and Non-Null</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/interfaces/">Interfaces</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/unions/">Unions</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/input-types/">Input Types</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/directives/">Directives</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 ">
-        <a class="" href="../type-system/schema/">Schema</a>
-        
-    </li>
-
-        
+                <li class="">
+                    
+    <a class="" href="../type-system/">Introduction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/object-types/">Object Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/scalar-types/">Scalar Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/enum-types/">Enumeration Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/lists-and-nonnulls/">Lists and Non-Null</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/interfaces/">Interfaces</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/unions/">Unions</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/input-types/">Input Types</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/directives/">Directives</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/schema/">Schema</a>
+                </li>
     </ul>
-<li>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../executing-queries/">Executing Queries</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../executing-queries/">Executing Queries</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../data-fetching/">Fetching Data</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../data-fetching/">Fetching Data</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Handling Errors</a>
-        
-            <ul>
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Handling Errors</a>
+    <ul class="subnav">
             
-                <li class="toctree-l3"><a href="#errors-in-graphql">Errors in GraphQL</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#debugging-tools">Debugging tools</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#custom-error-formatting">Custom Error Formatting</a></li>
-                
-            
-                <li class="toctree-l3"><a href="#schema-errors">Schema Errors</a></li>
-                
-            
-            </ul>
-        
-    </li>
-<li>
+    <li class="toctree-l2"><a href="#errors-in-graphql">Errors in GraphQL</a></li>
+    
+
+    <li class="toctree-l2"><a href="#debugging-tools">Debugging tools</a></li>
+    
+
+    <li class="toctree-l2"><a href="#custom-error-formatting">Custom Error Formatting</a></li>
+    
+
+    <li class="toctree-l2"><a href="#schema-errors">Schema Errors</a></li>
+    
+
+    </ul>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../complementary-tools/">Complementary Tools</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../complementary-tools/">Complementary Tools</a>
+	    </li>
           
         </ul>
       </div>
@@ -368,10 +317,10 @@ echo json_encode($body);
       </div>
 
     </section>
-
+    
   </div>
 
-<div class="rst-versions" role="note" style="cursor: pointer">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
@@ -382,6 +331,7 @@ echo json_encode($body);
       
     </span>
 </div>
+    <script src="../js/theme.js"></script>
 
 </body>
 </html>
