@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Complementary Tools - graphql-php</title>
+  <title>Security - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Complementary Tools";
-    var mkdocs_page_input_path = "complementary-tools.md";
-    var mkdocs_page_url = "/complementary-tools/";
+    var mkdocs_page_name = "Security";
+    var mkdocs_page_input_path = "security.md";
+    var mkdocs_page_url = "/security/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -57,18 +57,9 @@
     <a class="" href="../getting-started/">Getting Started</a>
 	    </li>
           
-            <li class="toctree-l1 current">
+            <li class="toctree-l1">
 		
-    <a class="current" href="./">Complementary Tools</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#integrations">Integrations</a></li>
-    
-
-    <li class="toctree-l2"><a href="#tools">Tools</a></li>
-    
-
-    </ul>
+    <a class="" href="../complementary-tools/">Complementary Tools</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -137,9 +128,21 @@
     <a class="" href="../error-handling/">Handling Errors</a>
 	    </li>
           
-            <li class="toctree-l1">
+            <li class="toctree-l1 current">
 		
-    <a class="" href="../security/">Security</a>
+    <a class="current" href="./">Security</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#query-complexity-analysis">Query Complexity Analysis</a></li>
+    
+
+    <li class="toctree-l2"><a href="#limiting-query-depth">Limiting Query Depth</a></li>
+    
+
+    <li class="toctree-l2"><a href="#disabling-introspection">Disabling Introspection</a></li>
+    
+
+    </ul>
 	    </li>
           
             <li class="toctree-l1">
@@ -174,7 +177,7 @@
     
       
     
-    <li>Complementary Tools</li>
+    <li>Security</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -184,22 +187,84 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="integrations">Integrations</h1>
-<ul>
-<li><a href="https://github.com/ivome/graphql-relay-php">Integration with Relay</a></li>
-<li><a href="https://github.com/Folkloreatelier/laravel-graphql">Integration with Laravel 5</a> + <a href="https://github.com/nuwave/laravel-graphql-relay">Relay Helpers for Laravel</a></li>
-<li><a href="https://github.com/overblog/GraphQLBundle">Symfony Bundle</a> by Overblog</li>
-<li>Define types with Doctrine ORM annotations (<a href="https://github.com/Ecodev/graphql-doctrine">for PHP7.1</a>, for <a href="https://github.com/rahuljayaraman/doctrine-graphql">earlier PHP versions</a>)</li>
-<li>Out of the box integration with any PSR-7 compatible framework (like <a href="http://slimframework.com">Slim</a> or <a href="http://zendframework.github.io/zend-expressive/">Zend Expressive</a>) via <a href="../executing-queries.md/#using-server">Standard Server</a></li>
-</ul>
-<h1 id="tools">Tools</h1>
-<ul>
-<li><a href="https://github.com/graphql/graphiql">GraphiQL</a> - An in-browser IDE for exploring GraphQL</li>
-<li><a href="https://chrome.google.com/webstore/detail/chromeiql/fkkiamalmpiidkljmicmjfbieiclmeij">ChromeiQL</a>
-  or <a href="https://chrome.google.com/webstore/detail/graphiql-feen/mcbfdonlkfpbfdpimkjilhdneikhfklp">GraphiQL Feen</a> -
-  GraphiQL as Google Chrome extension</li>
-<li><a href="https://github.com/overblog/dataloader-php">DataLoader PHP</a> - as a ready implementation for <a href="../data-fetching/#solving-n1-problem">deferred resolvers</a></li>
-</ul>
+                <h1 id="query-complexity-analysis">Query Complexity Analysis</h1>
+<p>This is a PHP port of <a href="http://sangria-graphql.org/learn/#query-complexity-analysis">Query Complexity Analysis</a> in Sangria implementation.</p>
+<p>Complexity analysis is a separate validation rule which calculates query complexity score before execution.
+Every field in the query gets a default score 1 (including ObjectType nodes). Total complexity of the 
+query is the sum of all field scores. For example, the complexity of introspection query is <strong>109</strong>.</p>
+<p>If this score exceeds a threshold, a query is not executed and an error is returned instead.</p>
+<p>Complexity analysis is disabled by default. To enabled it, add validation rule:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\GraphQL;
+use GraphQL\Validator\Rules\QueryComplexity;
+use GraphQL\Validator\DocumentValidator;
+
+$rule = new QueryComplexity($maxQueryComplexity = 100);
+DocumentValidator::addRule($rule);
+
+GraphQL::executeQuery(/*...*/);
+</code></pre>
+
+<p>This will set the rule globally. Alternatively, you can provide validation rules <a href="../executing-queries/#custom-validation-rules">per execution</a>.</p>
+<p>To customize field score add <strong>complexity</strong> function to field definition:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$type = new ObjectType([
+    'name' =&gt; 'MyType',
+    'fields' =&gt; [
+        'someList' =&gt; [
+            'type' =&gt; Type::listOf(Type::string()),
+            'args' =&gt; [
+                'limit' =&gt; [
+                    'type' =&gt; Type::int(),
+                    'defaultValue' =&gt; 10
+                ]
+            ],
+            'complexity' =&gt; function($childrenComplexity, $args) {
+                return $childrenComplexity * $args['limit'];
+            }
+        ]
+    ]
+]);
+</code></pre>
+
+<h1 id="limiting-query-depth">Limiting Query Depth</h1>
+<p>This is a PHP port of <a href="http://sangria-graphql.org/learn/#limiting-query-depth">Limiting Query Depth</a> in Sangria implementation.
+For example, max depth of the introspection query is <strong>7</strong>.</p>
+<p>It is disabled by default. To enable it, add following validation rule:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\GraphQL;
+use GraphQL\Validator\Rules\QueryDepth;
+use GraphQL\Validator\DocumentValidator;
+
+$rule = new QueryDepth($maxDepth = 10);
+DocumentValidator::addRule($rule);
+
+GraphQL::executeQuery(/*...*/);
+</code></pre>
+
+<p>This will set the rule globally. Alternatively, you can provide validation rules <a href="../executing-queries/#custom-validation-rules">per execution</a>.</p>
+<h1 id="disabling-introspection">Disabling Introspection</h1>
+<p><a href="http://graphql.org/learn/introspection/">Introspection</a> is a mechanism for fetching schema structure.
+It is used by tools like GraphiQL for auto-completion, query validation, etc.</p>
+<p>Introspection is enabled by default. It means that anybody can get a full description of your schema by 
+sending a special query containing meta fields <strong>__type</strong> and <strong>__schema</strong> .</p>
+<p>If you are not planning to expose your API to the general public, it makes sense to disable this feature.</p>
+<p>GraphQL PHP provides you separate validation rule which prohibits queries that contain 
+<strong>__type</strong> or <strong>__schema</strong> fields. To disable introspection, add following rule:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\GraphQL;
+use GraphQL\Validator\Rules\DisableIntrospection;
+use GraphQL\Validator\DocumentValidator;
+
+DocumentValidator::addRule(new DisableIntrospection());
+
+GraphQL::executeQuery(/*...*/);
+</code></pre>
+
+<p>This will set the rule globally. Alternatively, you can provide validation rules <a href="../executing-queries/#custom-validation-rules">per execution</a>.</p>
               
             </div>
           </div>
@@ -207,10 +272,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../type-system/" class="btn btn-neutral float-right" title="Introduction">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../how-it-works/" class="btn btn-neutral float-right" title="How it works">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../getting-started/" class="btn btn-neutral" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../error-handling/" class="btn btn-neutral" title="Handling Errors"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -236,10 +301,10 @@
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../getting-started/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../error-handling/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../type-system/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../how-it-works/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

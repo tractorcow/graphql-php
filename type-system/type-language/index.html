@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Lists and Non-Null - graphql-php</title>
+  <title>Using Type Language - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Lists and Non-Null";
-    var mkdocs_page_input_path = "type-system\\lists-and-nonnulls.md";
-    var mkdocs_page_url = "/type-system/lists-and-nonnulls/";
+    var mkdocs_page_name = "Using Type Language";
+    var mkdocs_page_input_path = "type-system\\type-language.md";
+    var mkdocs_page_url = "/type-system/type-language/";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js"></script>
@@ -82,18 +82,9 @@
                     
     <a class="" href="../enum-types/">Enumeration Types</a>
                 </li>
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">Lists and Non-Null</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#lists">Lists</a></li>
-    
-
-    <li class="toctree-l3"><a href="#non-null-fields">Non-Null fields</a></li>
-    
-
-    </ul>
+    <a class="" href="../lists-and-nonnulls/">Lists and Non-Null</a>
                 </li>
                 <li class="">
                     
@@ -115,9 +106,21 @@
                     
     <a class="" href="../schema/">Schema</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../type-language/">Using Type Language</a>
+    <a class="current" href="./">Using Type Language</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#defining-your-schema">Defining your schema</a></li>
+    
+
+    <li class="toctree-l3"><a href="#defining-resolvers">Defining resolvers</a></li>
+    
+
+    <li class="toctree-l3"><a href="#performance-considerations">Performance considerations</a></li>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -178,7 +181,7 @@
         
       
     
-    <li>Lists and Non-Null</li>
+    <li>Using Type Language</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -188,62 +191,79 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="lists">Lists</h1>
-<p><strong>graphql-php</strong> provides built-in support for lists. In order to create list type - wrap 
-existing type with <code>GraphQL\Type\Definition\Type::listOf()</code> modifier:</p>
-<pre><code class="php">&lt;?php
-namespace MyApp;
+                <h1 id="defining-your-schema">Defining your schema</h1>
+<p><a href="http://graphql.org/learn/schema/#type-language">Type language</a> is a convenient way to define your schema,
+especially with IDE autocompletion and syntax validation.</p>
+<p>Here is a simple schema defined in GraphQL type language (e.g. in a separate <strong>schema.graphql</strong> file):</p>
+<pre><code class="graphql">schema {
+    query: Query
+    mutation: Mutation
+}
 
-use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\ObjectType;
+type Query {
+    greetings(input: HelloInput!): String!
+}
 
-$userType = new ObjectType([
-    'name' =&gt; 'User',
-    'fields' =&gt; [
-        'emails' =&gt; [
-            'type' =&gt; Type::listOf(Type::string()),
-            'resolve' =&gt; function() {
-                return ['jon@example.com', 'jonny@example.com'];
-            }
-        ]
-    ]
-]);
+input HelloInput {
+    firstName: String!
+    lastName: String
+}
 </code></pre>
 
-<p>Resolvers for such fields are expected to return <strong>array</strong> or instance of PHP's built-in <strong>Traversable</strong> 
-interface (<strong>null</strong> is allowed by default too). </p>
-<p>If returned value is not of one of these types - <strong>graphql-php</strong> will add an error to result 
-and set the field value to <strong>null</strong> (only if the field is nullable, see below for non-null fields).</p>
-<h1 id="non-null-fields">Non-Null fields</h1>
-<p>By default in GraphQL, every field can have a <strong>null</strong> value. To indicate that some field always 
-returns <strong>non-null</strong> value - use <code>GraphQL\Type\Definition\Type::nonNull()</code> modifier:</p>
+<p>In order to create schema instance out of this file, use 
+<a href="../../reference/#graphqlutilsbuildschema"><code>GraphQL\Utils\BuildSchema</code></a>:</p>
 <pre><code class="php">&lt;?php
-use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Utils\BuildSchema;
 
-$humanType = new ObjectType([
-    'name' =&gt; 'User',
-    'fields' =&gt; [
-        'id' =&gt; [
-            'type' =&gt; Type::nonNull(Type::id()),
-            'resolve' =&gt; function() {
-                return uniqid();
-            }
-        ],
-        'emails' =&gt; [
-            'type' =&gt; Type::nonNull(Type::listOf(Type::string())),
-            'resolve' =&gt; function() {
-                return ['jon@example.com', 'jonny@example.com'];
-            }
-        ]
-    ]
-]);
+$contents = file_get_contents('schema.graphql');
+$schema = BuildSchema::build($contents);
 </code></pre>
 
-<p>If resolver of non-null field returns <strong>null</strong>, graphql-php will add an error to 
-result and exclude the whole object from the output (an error will bubble to first 
-nullable parent field which will be set to <strong>null</strong>).</p>
-<p>Read the section on <a href="../../data-fetching/">Data Fetching</a> for details.</p>
+<p>By default, such schema is created without any resolvers. As a result, it doesn't support <strong>Interfaces</strong> and <strong>Unions</strong>
+because it is impossible to resolve actual implementations during execution.</p>
+<p>Also, we have to rely on <a href="../../data-fetching/#default-field-resolver">default field resolver</a> and <strong>root value</strong> in 
+order to execute a query against this schema.</p>
+<h1 id="defining-resolvers">Defining resolvers</h1>
+<p>In order to enable <strong>Interfaces</strong>, <strong>Unions</strong> and custom field resolvers you can pass the second argument: 
+<strong>type config decorator</strong> to schema builder. </p>
+<p>It accepts default type config produced by the builder and is expected to add missing options like 
+<a href="../interfaces/#configuration-options"><strong>resolveType</strong></a> for interface types or 
+<a href="../object-types/#configuration-options"><strong>resolveField</strong></a> for object types.</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Utils\BuildSchema;
+
+$typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
+    $name = $typeConfig['name'];
+    // ... add missing options to $typeConfig based on type $name
+    return $typeConfig;
+};
+
+$contents = file_get_contents('schema.graphql');
+$schema = BuildSchema::build($contents, $typeConfigDecorator);
+</code></pre>
+
+<h1 id="performance-considerations">Performance considerations</h1>
+<p>Method <strong>build()</strong> produces a <a href="../schema/#lazy-loading-of-types">lazy schema</a>
+automatically, so it works efficiently even with very large schemas.</p>
+<p>But parsing type definition file on each request is suboptimal, so it is recommended to cache 
+intermediate parsed representation of the schema for the production environment:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Language\Parser;
+use GraphQL\Utils\BuildSchema;
+use GraphQL\Utils\AST;
+
+$cacheFilename = 'cached_schema.php';
+
+if (!file_exists($cacheFilename)) {
+    $document = Parser::parse(file_get_contents('./schema.graphql'));
+    file_put_contents($cacheFilename, &quot;&lt;?php\nreturn &quot; . var_export($document-&gt;toArray(), true));
+} else {
+    $document = AST::fromArray(require $cacheFilename); // fromArray() is a lazy operation as well
+}
+
+$typeConfigDecorator = function () {};
+$schema = BuildSchema::build($document, $typeConfigDecorator);
+</code></pre>
               
             </div>
           </div>
@@ -251,10 +271,10 @@ nullable parent field which will be set to <strong>null</strong>).</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../interfaces/" class="btn btn-neutral float-right" title="Interfaces">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../../executing-queries/" class="btn btn-neutral float-right" title="Executing Queries">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../enum-types/" class="btn btn-neutral" title="Enumeration Types"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../schema/" class="btn btn-neutral" title="Schema"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -280,10 +300,10 @@ nullable parent field which will be set to <strong>null</strong>).</p>
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../enum-types/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../schema/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../interfaces/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../../executing-queries/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

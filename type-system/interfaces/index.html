@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -112,7 +117,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -121,6 +126,10 @@
                 <li class="">
                     
     <a class="" href="../schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -142,7 +151,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -167,7 +186,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -185,8 +204,9 @@
 <p>An Interface is an abstract type that includes a certain set of fields that a 
 type must include to implement the interface.</p>
 <p>In <strong>graphql-php</strong> interface type is an instance of <code>GraphQL\Type\Definition\InterfaceType</code> 
-(or one of it subclasses) which accepts configuration array in constructor:</p>
-<pre><code class="php">use GraphQL\Type\Definition\InterfaceType;
+(or one of its subclasses) which accepts configuration array in a constructor:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\Type;
 
 $character = new InterfaceType([
@@ -213,9 +233,9 @@ $character = new InterfaceType([
 </code></pre>
 
 <p>This example uses <strong>inline</strong> style for Interface definition, but you can also use<br />
-<a href="../../type-system/#type-definition-styles">inheritance</a>.</p>
+<a href="../#type-definition-styles">inheritance or type language</a>.</p>
 <h1 id="configuration-options">Configuration options</h1>
-<p>Constructor of InterfaceType accepts an array. Below is a full list of allowed options:</p>
+<p>The constructor of InterfaceType accepts an array. Below is a full list of allowed options:</p>
 <table>
 <thead>
 <tr>
@@ -233,7 +253,7 @@ $character = new InterfaceType([
 <tr>
 <td>fields</td>
 <td><code>array</code></td>
-<td><strong>Required.</strong> List of fields required to be defined by interface implementors. Same as <a href="#">Fields for Object Type</a></td>
+<td><strong>Required.</strong> List of fields required to be defined by interface implementors. Same as <a href="../object-types/#field-configuration-options">Fields for Object Type</a></td>
 </tr>
 <tr>
 <td>description</td>
@@ -242,14 +262,18 @@ $character = new InterfaceType([
 </tr>
 <tr>
 <td>resolveType</td>
-<td><code>callback</code> returning instance of <code>ObjectType</code></td>
-<td><strong>function($value, $context, GraphQL\Type\Definition\ResolveInfo $info)</strong> Any <code>callable</code> that receives <code>$value</code> from resolver of the parent field and returns concrete interface implementor for that <code>$value</code>.</td>
+<td><code>callback</code></td>
+<td><strong>function($value, $context, <a href="../../reference/#graphqltypedefinitionresolveinfo">ResolveInfo</a> $info)</strong><br> Receives <strong>$value</strong> from resolver of the parent field and returns concrete interface implementor for this <strong>$value</strong>.</td>
 </tr>
 </tbody>
 </table>
 <h1 id="implementing-interface">Implementing interface</h1>
 <p>To implement the Interface simply add it to <strong>interfaces</strong> array of Object Type definition:</p>
-<pre><code class="php">$humanType = new ObjectType([
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$humanType = new ObjectType([
     'name' =&gt; 'Human',
     'fields' =&gt; [
         'id' =&gt; [
@@ -272,7 +296,7 @@ $character = new InterfaceType([
 <p>The only exception is when object's field type is more specific than the type of this field defined in interface 
 (see <a href="#covariant-return-types-for-interface-fields">Covariant return types for interface fields</a> below)</p>
 <h1 id="covariant-return-types-for-interface-fields">Covariant return types for interface fields</h1>
-<p>Object types implementing interface may change field type to more specific.
+<p>Object types implementing interface may change the field type to more specific.
 Example:</p>
 <pre><code>interface A {
   field1: A
@@ -285,8 +309,12 @@ type B implements A {
 
 <h1 id="sharing-interface-fields">Sharing Interface fields</h1>
 <p>Since every Object Type implementing an Interface must have the same set of fields - it often makes 
-sense to re-use field definitions of Interface in Object Types:</p>
-<pre><code class="php">$humanType = new ObjectType([
+sense to reuse field definitions of Interface in Object Types:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$humanType = new ObjectType([
     'name' =&gt; 'Human',
     'interfaces' =&gt; [
         $character
@@ -299,10 +327,10 @@ sense to re-use field definitions of Interface in Object Types:</p>
 ]);
 </code></pre>
 
-<p>In this case field definitions are created only once (as a part of Interface Type) and then 
-re-used by all interface implementors. It can save several microseconds and kilobytes + ensures that 
+<p>In this case, field definitions are created only once (as a part of Interface Type) and then 
+reused by all interface implementors. It can save several microseconds and kilobytes + ensures that 
 field definitions of Interface and implementors are always in sync.</p>
-<p>Yet it creates a problem with resolution of such fields. There are two ways how shared fields could 
+<p>Yet it creates a problem with the resolution of such fields. There are two ways how shared fields could 
 be resolved:</p>
 <ol>
 <li>
@@ -310,17 +338,17 @@ be resolved:</p>
 <strong>resolve</strong> option to field definition in Interface itself.</p>
 </li>
 <li>
-<p>If field resolution varies from implementor to implementor - you can specify <strong>resolveField</strong> 
-option in <a href="../../type-system/object-types/#configuration-options">Object Type config</a> and handle field 
+<p>If field resolution varies for different implementations - you can specify <strong>resolveField</strong> 
+option in <a href="../object-types/#configuration-options">Object Type config</a> and handle field 
 resolutions there 
 (Note: <strong>resolve</strong> option in field definition has precedence over <strong>resolveField</strong> option in object type definition)</p>
 </li>
 </ol>
 <h1 id="interface-role-in-data-fetching">Interface role in data fetching</h1>
 <p>The only responsibility of interface in Data Fetching process is to return concrete Object Type 
-for given <code>$value</code> in <strong>resolveType</strong>. Then resolution of fields is delegated to resolvers of this 
+for given <strong>$value</strong> in <strong>resolveType</strong>. Then resolution of fields is delegated to resolvers of this 
 concrete Object Type.</p>
-<p>If <strong>resolveType</strong> option is omitted, <strong>graphql-php</strong> will loop through all interface implementors and 
+<p>If a <strong>resolveType</strong> option is omitted, graphql-php will loop through all interface implementors and 
 use their <strong>isTypeOf</strong> callback to pick the first suitable one. This is obviously less efficient 
 than single <strong>resolveType</strong> call. So it is recommended to define <strong>resolveType</strong> whenever possible.</p>
               

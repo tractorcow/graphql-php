@@ -76,7 +76,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -108,7 +113,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="type-system/input-types/">Input Types</a>
+    <a class="" href="type-system/input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -117,6 +122,10 @@
                 <li class="">
                     
     <a class="" href="type-system/schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="type-system/type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -138,7 +147,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="complementary-tools/">Complementary Tools</a>
+    <a class="" href="security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -179,35 +198,39 @@
 <a href="https://packagist.org/packages/webonyx/graphql-php"><img alt="Latest Stable Version" src="https://poser.pugx.org/webonyx/graphql-php/version" /></a>
 <a href="https://packagist.org/packages/webonyx/graphql-php"><img alt="License" src="https://poser.pugx.org/webonyx/graphql-php/license" /></a></p>
 <h1 id="about-graphql">About GraphQL</h1>
-<p>GraphQL is a modern way to build HTTP APIs consumed by web and mobile clients.
+<p>GraphQL is a modern way to build HTTP APIs consumed by the web and mobile clients.
 It is intended to be a replacement for REST and SOAP APIs (even for <strong>existing applications</strong>).</p>
 <p>GraphQL itself is a <a href="https://github.com/facebook/graphql">specification</a> designed by Facebook
 engineers. Various implementations of this specification were written 
-<a href="http://graphql.org/code/">for different languages and environments</a>.</p>
-<p>Great overview of GraphQL features and benefits is presented on <a href="http://graphql.org/">official website</a>. 
+<a href="http://graphql.org/code/">in different languages and environments</a>.</p>
+<p>Great overview of GraphQL features and benefits is presented on <a href="http://graphql.org/">the official website</a>. 
 All of them equally apply to this PHP implementation. </p>
 <h1 id="about-graphql-php">About graphql-php</h1>
-<p><strong>graphql-php</strong> is a feature-complete implementation of GraphQL specification in PHP (5.4+, 7.0+). 
+<p><strong>graphql-php</strong> is a feature-complete implementation of GraphQL specification in PHP (5.5+, 7.0+). 
 It was originally inspired by <a href="https://github.com/graphql/graphql-js">reference JavaScript implementation</a> 
 published by Facebook.</p>
 <p>This library is a thin wrapper around your existing data layer and business logic. 
 It doesn't dictate how these layers are implemented or which storage engines 
-are used. Instead it provides tools for creating rich API for your existing app. </p>
-<p>These tools include:</p>
+are used. Instead, it provides tools for creating rich API for your existing app.</p>
+<p>Library features include:</p>
 <ul>
-<li>Primitives to express your app as a Type System</li>
-<li>Tools for validation and introspection of this Type System (for compatibility with tools like <a href="./complementary-tools/#tools">GraphiQL</a>)</li>
-<li>Tools for parsing, validating and executing GraphQL queries against this Type System</li>
-<li>Rich error reporting, including query validation and execution errors</li>
-<li>Optional tools for parsing GraphQL Schema Definition language</li>
+<li>Primitives to express your app as a <a href="type-system/">Type System</a></li>
+<li>Validation and introspection of this Type System (for compatibility with tools like <a href="complementary-tools/#tools">GraphiQL</a>)</li>
+<li>Parsing, validating and <a href="executing-queries/">executing GraphQL queries</a> against this Type System</li>
+<li>Rich <a href="error-handling/">error reporting</a>, including query validation and execution errors</li>
+<li>Optional tools for <a href="type-system/type-language/">parsing GraphQL Type language</a></li>
+<li>Tools for <a href="./data-fetching.md/#solving-n1-problem">batching requests</a> to backend storage</li>
+<li><a href="./data-fetching.md/#async-php">Async PHP platforms support</a> via promises</li>
+<li><a href="./executing-queries.md/#using-server">Standard HTTP server</a></li>
 </ul>
-<p>Also several <a href="./complementary-tools/">complementary tools</a> are available which provide integrations with 
+<p>Also, several <a href="complementary-tools/">complementary tools</a> are available which provide integrations with 
 existing PHP frameworks, add support for Relay, etc.</p>
 <h2 id="current-status">Current Status</h2>
-<p>First version of this library (v0.1) was released on August 10th 2015.</p>
-<p>Current version (v0.9) supports all features described by GraphQL specification 
+<p>The first version of this library (v0.1) was released on August 10th 2015.</p>
+<p>The current version (v0.10) supports all features described by GraphQL specification 
 (including April 2016 add-ons) as well as some experimental features like 
-Schema Language parser.</p>
+<a href="type-system/type-language/">Schema Language parser</a> and 
+<a href="reference/#graphqlutilsschemaprinter">Schema printer</a>.</p>
 <p>Ready for real-world usage. </p>
 <h2 id="github">Github</h2>
 <p>Project source code is <a href="https://github.com/webonyx/graphql-php">hosted on GitHub</a>.</p>
@@ -257,5 +280,5 @@ Schema Language parser.</p>
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-04-25 11:15:39
+Build Date UTC : 2017-08-20 16:28:58
 -->

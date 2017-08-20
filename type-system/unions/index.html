@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -100,7 +105,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -109,6 +114,10 @@
                 <li class="">
                     
     <a class="" href="../schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -130,7 +139,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -155,7 +174,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -171,15 +190,18 @@
               
                 <h1 id="union-type-definition">Union Type Definition</h1>
 <p>A Union is an abstract type that simply enumerates other Object Types. 
-Value of Union Type is actually a value of one of included Object Types.</p>
+The value of Union Type is actually a value of one of included Object Types.</p>
 <p>In <strong>graphql-php</strong> union type is an instance of <code>GraphQL\Type\Definition\UnionType</code> 
-(or one of it subclasses) which accepts configuration array in constructor:</p>
-<pre><code class="php">$searchResultType = new UnionType([
+(or one of its subclasses) which accepts configuration array in a constructor:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\UnionType;
+
+$searchResultType = new UnionType([
     'name' =&gt; 'SearchResult',
     'types' =&gt; [
         MyTypes::story(),
         MyTypes::user()
-    ];
+    ],
     'resolveType' =&gt; function($value) {
         if ($value-&gt;type === 'story') {
             return MyTypes::story();            
@@ -191,9 +213,9 @@ Value of Union Type is actually a value of one of included Object Types.</p>
 </code></pre>
 
 <p>This example uses <strong>inline</strong> style for Union definition, but you can also use<br />
-<a href="../../type-system/#type-definition-styles">inheritance</a>.</p>
+<a href="../#type-definition-styles">inheritance or type language</a>.</p>
 <h1 id="configuration-options">Configuration options</h1>
-<p>Constructor of UnionType accepts an array. Below is a full list of allowed options:</p>
+<p>The constructor of UnionType accepts an array. Below is a full list of allowed options:</p>
 <table>
 <thead>
 <tr>
@@ -220,8 +242,8 @@ Value of Union Type is actually a value of one of included Object Types.</p>
 </tr>
 <tr>
 <td>resolveType</td>
-<td><code>callback</code> returning instance of <code>ObjectType</code></td>
-<td><strong>function($value, $context, GraphQL\Type\Definition\ResolveInfo $info)</strong> Any <code>callable</code> that receives <code>$value</code> from resolver of the parent field and returns Object Type for that <code>$value</code>.</td>
+<td><code>callback</code></td>
+<td><strong>function($value, $context, <a href="../../reference/#graphqltypedefinitionresolveinfo">ResolveInfo</a> $info)</strong><br> Receives <strong>$value</strong> from resolver of the parent field and returns concrete Object Type for this <strong>$value</strong>.</td>
 </tr>
 </tbody>
 </table>
@@ -232,7 +254,7 @@ Value of Union Type is actually a value of one of included Object Types.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../input-types/" class="btn btn-neutral float-right" title="Input Types">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../input-types/" class="btn btn-neutral float-right" title="Mutations and Input Types">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../interfaces/" class="btn btn-neutral" title="Interfaces"><span class="icon icon-circle-arrow-left"></span> Previous</a>

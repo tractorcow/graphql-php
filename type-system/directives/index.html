@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -91,7 +96,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class=" current">
                     
@@ -109,6 +114,10 @@
                 <li class="">
                     
     <a class="" href="../schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -130,7 +139,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -155,7 +174,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -170,13 +189,13 @@
             <div class="section">
               
                 <h1 id="built-in-directives">Built-in directives</h1>
-<p>Directive is a way for client to give GraphQL server additional context and hints on how to execute
-the query. Directive can be attached to a field or fragment inclusion, and can affect execution of the 
+<p>The directive is a way for a client to give GraphQL server additional context and hints on how to execute
+the query. The directive can be attached to a field or fragment and can affect the execution of the 
 query in any way the server desires.</p>
 <p>GraphQL specification includes two built-in directives:</p>
 <ul>
-<li><code>@include(if: Boolean)</code> Only include this field or fragment in the result if the argument is <code>true</code> </li>
-<li><code>@skip(if: Boolean)</code> Skip this field or fragment if the argument is <code>true</code></li>
+<li><strong>@include(if: Boolean)</strong> Only include this field or fragment in the result if the argument is <strong>true</strong> </li>
+<li><strong>@skip(if: Boolean)</strong> Skip this field or fragment if the argument is <strong>true</strong></li>
 </ul>
 <p>For example:</p>
 <pre><code class="graphql">query Hero($episode: Episode, $withFriends: Boolean!) {
@@ -189,46 +208,41 @@ query in any way the server desires.</p>
 }
 </code></pre>
 
-<p>Here if <code>$withFriends</code> variable is set to <code>false</code> - friends section will be ignored and excluded 
-from response. Important implementation detail: those fields will never be executed 
+<p>Here if <strong>$withFriends</strong> variable is set to <strong>false</strong> - friends section will be ignored and excluded 
+from the response. Important implementation detail: those fields will never be executed 
 (not just removed from response after execution).</p>
 <h1 id="custom-directives">Custom directives</h1>
-<p><strong>graphql-php</strong> supports custom directives even though their presence does not affect execution of fields.
-But you can use <code>GraphQL\Type\Definition\ResolveInfo</code> in field resolvers to modify the output depending
-on those directives or perform statistics collection.</p>
+<p><strong>graphql-php</strong> supports custom directives even though their presence does not affect the execution of fields.
+But you can use <a href="../../reference/#graphqltypedefinitionresolveinfo"><code>GraphQL\Type\Definition\ResolveInfo</code></a> 
+in field resolvers to modify the output depending on those directives or perform statistics collection.</p>
 <p>Other use case is your own query validation rules relying on custom directives.</p>
 <p>In <strong>graphql-php</strong> custom directive is an instance of <code>GraphQL\Type\Definition\Directive</code>
-(or one of it subclasses) which accepts an array with following options:</p>
-<pre><code class="php">use GraphQL\Type\Definition\Directive;
+(or one of its subclasses) which accepts an array of following options:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\Directive;
+use GraphQL\Type\Definition\DirectiveLocation;
 use GraphQL\Type\Definition\FieldArgument;
 
 $trackDirective = new Directive([
     'name' =&gt; 'track',
-    'description' =&gt; 'Instruction to record usage of the field by client' 
+    'description' =&gt; 'Instruction to record usage of the field by client',
     'locations' =&gt; [
-        Directive::LOCATION_FIELD,
+        DirectiveLocation::FIELD,
     ],
     'args' =&gt; [
         new FieldArgument([
             'name' =&gt; 'details',
             'type' =&gt; Type::string(),
-            'description' =&gt; 'String with additional details of field usage scenario'
+            'description' =&gt; 'String with additional details of field usage scenario',
             'defaultValue' =&gt; ''
         ])
     ]
 ]);
 </code></pre>
 
-<p>Directive location can be one of the following values:</p>
-<ul>
-<li><code>Directive::LOCATION_QUERY</code></li>
-<li><code>Directive::LOCATION_MUTATION</code></li>
-<li><code>Directive::LOCATION_SUBSCRIPTION</code></li>
-<li><code>Directive::LOCATION_FIELD</code></li>
-<li><code>Directive::LOCATION_FRAGMENT_DEFINITION</code></li>
-<li><code>Directive::LOCATION_FRAGMENT_SPREAD</code></li>
-<li><code>Directive::LOCATION_INLINE_FRAGMENT</code></li>
-</ul>
+<p>See possible directive locations in 
+<a href="../../reference/#graphqltypedefinitiondirectivelocation"><code>GraphQL\Type\Definition\DirectiveLocation</code></a>.</p>
               
             </div>
           </div>
@@ -239,7 +253,7 @@ $trackDirective = new Directive([
         <a href="../schema/" class="btn btn-neutral float-right" title="Schema">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../input-types/" class="btn btn-neutral" title="Input Types"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../input-types/" class="btn btn-neutral" title="Mutations and Input Types"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

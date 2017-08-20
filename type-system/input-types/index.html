@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Input Types - graphql-php</title>
+  <title>Mutations and Input Types - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Input Types";
+    var mkdocs_page_name = "Mutations and Input Types";
     var mkdocs_page_input_path = "type-system\\input-types.md";
     var mkdocs_page_url = "/type-system/input-types/";
   </script>
@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -91,9 +96,12 @@
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Input Types</a>
+    <a class="current" href="./">Mutations and Input Types</a>
     <ul class="subnav">
             
+    <li class="toctree-l3"><a href="#mutations">Mutations</a></li>
+    
+
     <li class="toctree-l3"><a href="#about-input-and-output-types">About Input and Output Types</a></li>
     
 
@@ -116,6 +124,10 @@
                     
     <a class="" href="../schema/">Schema</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
+                </li>
     </ul>
 	    </li>
           
@@ -136,7 +148,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -161,11 +183,11 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
-    <li>Input Types</li>
+    <li>Mutations and Input Types</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -175,12 +197,53 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="about-input-and-output-types">About Input and Output Types</h1>
-<p>GraphQL receives data from clients via <a href="../object-types/#field-arguments">Field Arguments</a>.</p>
-<p>Both - fields and arguments require <strong>type</strong> option in definition. But expected value of this option
-is different for fields and arguments, as in GraphQL argument is conceptually input while field is conceptually 
-output.</p>
-<p>Consequentially all types in GraphQL are of two categories: <strong>input</strong> and <strong>output</strong>.</p>
+                <h1 id="mutations">Mutations</h1>
+<p>Mutation is just a field of a regular <a href="../object-types/">Object Type</a> with arguments.
+For GraphQL PHP runtime there is no difference between query fields with arguments and mutations.
+They are executed <a href="http://facebook.github.io/graphql/#sec-Mutation">almost</a> identically. 
+To some extent, Mutation is just a convention described in the GraphQL spec.</p>
+<p>Here is an example of a mutation operation:</p>
+<pre><code class="graphql">mutation CreateReviewForEpisode($ep: EpisodeInput!, $review: ReviewInput!) {
+  createReview(episode: $ep, review: $review) {
+    stars
+    commentary
+  }
+}
+</code></pre>
+
+<p>To execute such a mutation, you need <strong>Mutation</strong> type <a href="../schema/">at the root of your schema</a>:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$myMutationType = new ObjectType([
+    'name' =&gt; 'Mutation',
+    'fields' =&gt; [
+        // List of mutations:
+        'createReview' =&gt; [
+            'args' =&gt; [
+                'episode' =&gt; Type::nonNull($episodeInputType),
+                'review' =&gt; Type::nonNull($reviewInputType)
+            ],
+            'type' =&gt; new ObjectType([
+                'name' =&gt; 'CreateReviewOutput',
+                'fields' =&gt; [
+                    'stars' =&gt; ['type' =&gt; Type::int()],
+                    'commentary' =&gt; ['type' =&gt; Type::string()]
+                ]
+            ]),
+        ],
+        // ... other mutations
+    ]
+]);
+</code></pre>
+
+<p>As you can see, the only difference from regular object type is the semantics of field names
+(verbs vs nouns).</p>
+<p>Also as we see arguments can be of complex types. To leverage the full power of mutations 
+(and field arguments in general) you must learn how to create complex input types.</p>
+<h1 id="about-input-and-output-types">About Input and Output Types</h1>
+<p>All types in GraphQL are of two categories: <strong>input</strong> and <strong>output</strong>.</p>
 <ul>
 <li>
 <p><strong>Output</strong> types (or field types) are: <a href="../scalar-types/">Scalar</a>, <a href="../enum-types/">Enum</a>, <a href="../object-types/">Object</a>, 
@@ -190,17 +253,21 @@ output.</p>
 <p><strong>Input</strong> types (or argument types) are: <a href="../scalar-types/">Scalar</a>, <a href="../enum-types/">Enum</a>, InputObject</p>
 </li>
 </ul>
-<p>Obviously <a href="../lists-and-nonnulls/">NonNull and List</a> types belong to both categories depending on their 
+<p>Obviously, <a href="../lists-and-nonnulls/">NonNull and List</a> types belong to both categories depending on their 
 inner type.</p>
 <p>Until now all examples of field <strong>arguments</strong> in this documentation were of <a href="../scalar-types/">Scalar</a> or 
-<a href="../enum-types/">Enum</a> types. But you can also easily pass complex objects. </p>
-<p>This is particularly valuable in the case of mutations, where input data might be rather complex.</p>
+<a href="../enum-types/">Enum</a> types. But you can also pass complex objects. </p>
+<p>This is particularly valuable in case of mutations, where input data might be rather complex.</p>
 <h1 id="input-object-type">Input Object Type</h1>
 <p>GraphQL specification defines Input Object Type for complex inputs. It is similar to ObjectType
 except that it's fields have no <strong>args</strong> or <strong>resolve</strong> options and their <strong>type</strong> must be input type.</p>
-<p>In <strong>graphql-php</strong> Input Object Type is an instance of <code>GraphQL\Type\Definition\InputObjectType</code> 
+<p>In graphql-php <strong>Input Object Type</strong> is an instance of <code>GraphQL\Type\Definition\InputObjectType</code> 
 (or one of it subclasses) which accepts configuration array in constructor:</p>
-<pre><code class="php">$filters = new InputObjectType([
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\InputObjectType;
+
+$filters = new InputObjectType([
     'name' =&gt; 'StoryFiltersInput',
     'fields' =&gt; [
         'author' =&gt; [
@@ -221,7 +288,7 @@ except that it's fields have no <strong>args</strong> or <strong>resolve</strong
 
 <p>Every field may be of other InputObjectType (thus complex hierarchies of inputs are possible)</p>
 <h1 id="configuration-options">Configuration options</h1>
-<p>Constructor of InputObjectType accepts array with only 3 options:</p>
+<p>The constructor of InputObjectType accepts array with only 3 options:</p>
 <table>
 <thead>
 <tr>
@@ -238,8 +305,8 @@ except that it's fields have no <strong>args</strong> or <strong>resolve</strong
 </tr>
 <tr>
 <td>fields</td>
-<td><code>array</code> or <code>callback</code> returning <code>array</code></td>
-<td><strong>Required</strong>. Array describing object fields (see below).</td>
+<td><code>array</code> or <code>callable</code></td>
+<td><strong>Required</strong>. An array describing object fields or callable returning such an array (see below).</td>
 </tr>
 <tr>
 <td>description</td>
@@ -266,7 +333,7 @@ except that it's fields have no <strong>args</strong> or <strong>resolve</strong
 <tr>
 <td>type</td>
 <td><code>Type</code></td>
-<td><strong>Required.</strong> Instance of one of <a href="../input-types/">Input Types</a> (<code>Scalar</code>, <code>Enum</code>, <code>InputObjectType</code> + any combination of those with <code>NonNull</code> and <code>List</code> modifiers)</td>
+<td><strong>Required.</strong> Instance of one of <a href="./">Input Types</a> (<strong>Scalar</strong>, <strong>Enum</strong>, <strong>InputObjectType</strong> + any combination of those with <strong>nonNull</strong> and <strong>listOf</strong> modifiers)</td>
 </tr>
 <tr>
 <td>description</td>
@@ -282,7 +349,11 @@ except that it's fields have no <strong>args</strong> or <strong>resolve</strong
 </table>
 <h1 id="using-input-object-type">Using Input Object Type</h1>
 <p>In the example above we defined our InputObjectType. Now let's use it in one of field arguments:</p>
-<pre><code class="php">$queryType = new ObjectType([
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$queryType = new ObjectType([
     'name' =&gt; 'Query',
     'fields' =&gt; [
         'stories' =&gt; [

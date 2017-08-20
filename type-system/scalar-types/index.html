@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -100,7 +105,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -109,6 +114,10 @@
                 <li class="">
                     
     <a class="" href="../schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -130,7 +139,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -155,7 +174,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -171,8 +190,9 @@
               
                 <h1 id="built-in-scalar-types">Built-in Scalar Types</h1>
 <p>GraphQL specification describes several built-in scalar types. In <strong>graphql-php</strong> they are 
-exposed as static methods of <code>GraphQL\Type\Definition\Type</code> class:</p>
-<pre><code class="php">use GraphQL\Type\Definition\Type;
+exposed as static methods of <a href="../../reference/#graphqltypedefinitiontype"><code>GraphQL\Type\Definition\Type</code></a> class:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
 
 // Built-in Scalar types:
 Type::string();  // String type
@@ -182,38 +202,39 @@ Type::boolean(); // Boolean type
 Type::id();      // ID type
 </code></pre>
 
-<p>Those methods return instances of <code>GraphQL\Type\Definition\ScalarType</code> (actually one of it subclasses).
-Use them directly in type definitions, or wrap in your <a href="../../type-system/#type-registry">TypeRegistry</a> 
+<p>Those methods return instances of <code>GraphQL\Type\Definition\ScalarType</code> (actually one of subclasses).
+Use them directly in type definitions, or wrap in your <a href="../#type-registry">TypeRegistry</a> 
 (if you use one).</p>
 <h1 id="writing-custom-scalar-types">Writing Custom Scalar Types</h1>
 <p>In addition to built-in scalars, you can define your own scalar types with additional validation. 
-Typical examples of such types are: <code>Email</code>, <code>Date</code>, <code>Url</code>, etc.</p>
-<p>In order to implement your own type you must understand how scalars are presented in GraphQL.
+Typical examples of such types are <strong>Email</strong>, <strong>Date</strong>, <strong>Url</strong>, etc.</p>
+<p>In order to implement your own type, you must understand how scalars are presented in GraphQL.
 GraphQL deals with scalars in following cases:</p>
 <ol>
 <li>
-<p>When converting <strong>internal representation</strong> of value returned by your app (e.g. stored in database 
-or hardcoded in source code) to <strong>serialized</strong> representation included in response.</p>
+<p>When converting <strong>internal representation</strong> of value returned by your app (e.g. stored in a database 
+or hardcoded in the source code) to <strong>serialized</strong> representation included in the response.</p>
 </li>
 <li>
-<p>When converting <strong>input value</strong> passed by client in variables along with GraphQL query to 
+<p>When converting <strong>input value</strong> passed by a client in variables along with GraphQL query to 
 <strong>internal representation</strong> of your app.</p>
 </li>
 <li>
 <p>When converting <strong>input literal value</strong> hardcoded in GraphQL query (e.g. field argument value) to 
-<strong>internal representation</strong> of your app.</p>
+the <strong>internal representation</strong> of your app.</p>
 </li>
 </ol>
 <p>Those cases are covered by methods <code>serialize</code>, <code>parseValue</code> and <code>parseLiteral</code> of abstract <code>ScalarType</code> 
 class respectively.</p>
-<p>Here is an example of simple <code>Email</code> type:</p>
+<p>Here is an example of a simple <strong>Email</strong> type:</p>
 <pre><code class="php">&lt;?php
 namespace MyApp;
 
 use GraphQL\Error\Error;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
-use GraphQL\Utils;
+use GraphQL\Utils\Utils;
 
 class EmailType extends ScalarType
 {
@@ -232,8 +253,11 @@ class EmailType extends ScalarType
         // Assuming internal representation of email is always correct:
         return $value;
 
-        // If it might be incorrect and you want to make sure that only correct values are included in response -
-        // use following line instead:
+        // If it might be incorrect and you want to make sure that only correct values are included
+        // in response - use following line instead:
+        // if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        //     throw new InvariantViolation(&quot;Could not serialize following value as email: &quot; . Utils::printSafe($value));
+        // }
         // return $this-&gt;parseValue($value);
     }
 
@@ -246,7 +270,7 @@ class EmailType extends ScalarType
     public function parseValue($value)
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new \UnexpectedValueException(&quot;Cannot represent value as email: &quot; . Utils::printSafe($value));
+            throw new Error(&quot;Cannot represent following value as email: &quot; . Utils::printSafeJson($value));
         }
         return $value;
     }

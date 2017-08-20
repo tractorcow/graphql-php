@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -91,7 +96,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../type-system/input-types/">Input Types</a>
+    <a class="" href="../type-system/input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -100,6 +105,10 @@
                 <li class="">
                     
     <a class="" href="../type-system/schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -122,10 +131,13 @@
     <li class="toctree-l2"><a href="#errors-in-graphql">Errors in GraphQL</a></li>
     
 
+    <li class="toctree-l2"><a href="#default-error-formatting">Default Error formatting</a></li>
+    
+
     <li class="toctree-l2"><a href="#debugging-tools">Debugging tools</a></li>
     
 
-    <li class="toctree-l2"><a href="#custom-error-formatting">Custom Error Formatting</a></li>
+    <li class="toctree-l2"><a href="#custom-error-handling-and-formatting">Custom Error Handling and Formatting</a></li>
     
 
     <li class="toctree-l2"><a href="#schema-errors">Schema Errors</a></li>
@@ -136,7 +148,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -172,116 +194,164 @@
             <div class="section">
               
                 <h1 id="errors-in-graphql">Errors in GraphQL</h1>
-<p>Query execution process never throws exceptions. Instead all errors that occur during query execution
-are caught, collected and included in response. </p>
-<p>There are 3 types of errors in GraphQL (Syntax, Validation and Execution errors):</p>
-<p><strong>Syntax</strong> errors are returned in response when query has invalid syntax and could not be parsed.
-Example output for invalid query <code>{hello</code> (missing bracket):</p>
-<pre><code class="php">[
-    'errors' =&gt; [
-        [
-            'message' =&gt; &quot;Syntax Error GraphQL request (1:7) Expected Name, found &lt;EOF&gt;\n\n1: {hello\n         ^\n&quot;,
-            'locations' =&gt; [
-                ['line' =&gt; 1, 'column' =&gt; 7]
-            ]
-        ]
-    ]
-]
-</code></pre>
-
-<p><strong>Validation</strong> errors - returned in response when query has semantic errors. 
-Example output for invalid query <code>{unknownField}</code>:</p>
-<pre><code class="php">[
-    'errors' =&gt; [
-        [
-            'message' =&gt; 'Cannot query field &quot;unknownField&quot; on type &quot;Query&quot;.',
-            'locations' =&gt; [
-                ['line' =&gt; 1, 'column' =&gt; 2]
-            ]
-        ]
-    ]
-]
-</code></pre>
-
-<p><strong>Execution</strong> errors - included in response when some field resolver throws 
-(or returns unexpected value). Example output for query with exception thrown in 
-field resolver <code>{fieldWithException}</code>:</p>
-<pre><code class="php">[
-    'data' =&gt; [
-        'fieldWithException' =&gt; null
+<p>Query execution process never throws exceptions. Instead, all errors are caught and collected. 
+After execution, they are available in <strong>$errors</strong> prop of 
+<a href="../reference/#graphqlexecutorexecutionresult"><code>GraphQL\Executor\ExecutionResult</code></a>.</p>
+<p>When the result is converted to a serializable array using its <strong>toArray()</strong> method, all errors are 
+converted to arrays as well using default error formatting (see below). </p>
+<p>Alternatively, you can apply <a href="#custom-error-handling-and-formatting">custom error filtering and formatting</a>
+for your specific requirements.</p>
+<h1 id="default-error-formatting">Default Error formatting</h1>
+<p>By default, each error entry is converted to an associative array with following structure:</p>
+<pre><code class="php">&lt;?php
+[
+    'message' =&gt; 'Error message',
+    'category' =&gt; 'graphql',
+    'locations' =&gt; [
+        ['line' =&gt; 1, 'column' =&gt; 2]
     ],
-    'errors' =&gt; [
-        [
-            'message' =&gt; 'Exception message thrown in field resolver',
-            'locations' =&gt; [
-                ['line' =&gt; 1, 'column' =&gt; 2]
-            ],
-            'path': [
-                'fieldWithException'
-            ]
-        ]
+    'path' =&gt; [
+        'listField',
+        0,
+        'fieldWithException'
     ]
-]
+];
 </code></pre>
 
-<p>Obviously when <strong>Syntax</strong> or <strong>Validation</strong> error is detected - process is interrupted and query is not 
-executed. In such scenarios response only contains <strong>errors</strong>, but not <strong>data</strong>.</p>
-<p>GraphQL is forgiving to <strong>Execution</strong> errors which occur in resolvers of nullable fields. 
-If such field throws or returns unexpected value the value of the field in response will be simply 
-replaced with <code>null</code> and error entry will be added to response.</p>
-<p>If exception is thrown in non-null field - error bubbles up to first nullable field. This nullable field is<br />
-replaced with <code>null</code> and error entry is added to response. If all fields up to the root are non-null - 
-<strong>data</strong> entry will be removed from response and only <strong>errors</strong> key will be presented.</p>
+<p>Entry at key <strong>locations</strong> points to a character in query string which caused the error.
+In some cases (like deep fragment fields) locations will include several entries to track down 
+the path to field with the error in query.</p>
+<p>Entry at key <strong>path</strong> exists only for errors caused by exceptions thrown in resolvers. 
+It contains a path from the very root field to actual field value producing an error 
+(including indexes for list types and field names for composite types). </p>
+<p><strong>Internal errors</strong></p>
+<p>As of version <strong>0.10.0</strong>, all exceptions thrown in resolvers are reported with generic message <strong>"Internal server error"</strong>.
+This is done to avoid information leak in production environments (e.g. database connection errors, file access errors, etc).</p>
+<p>Only exceptions implementing interface <a href="../reference/#graphqlerrorclientaware"><code>GraphQL\Error\ClientAware</code></a> and claiming themselves as <strong>safe</strong> will 
+be reported with a full error message.</p>
+<p>For example:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Error\ClientAware;
+
+class MySafeException extends \Exception implements ClientAware
+{
+    public function isClientSafe()
+    {
+        return true;
+    }
+
+    public function getCategory()
+    {
+        return 'businessLogic';
+    }
+}
+</code></pre>
+
+<p>When such exception is thrown it will be reported with a full error message:</p>
+<pre><code class="php">&lt;?php
+[
+    'message' =&gt; 'My reported error',
+    'category' =&gt; 'businessLogic',
+    'locations' =&gt; [
+        ['line' =&gt; 10, 'column' =&gt; 2]
+    ],
+    'path' =&gt; [
+        'path',
+        'to',
+        'fieldWithException'
+    ]
+];
+</code></pre>
+
+<p>To change default <strong>"Internal server error"</strong> message to something else, use: </p>
+<pre><code>GraphQL\Error\FormattedError::setInternalErrorMessage(&quot;Unexpected error&quot;);
+</code></pre>
+
 <h1 id="debugging-tools">Debugging tools</h1>
-<p>Each error entry contains pointer to line and column in original query string which caused 
-the error:</p>
-<pre><code class="php">'locations' =&gt; [
-    ['line' =&gt; 1, 'column' =&gt; 2]
-]
+<p>During development or debugging use <code>$result-&gt;toArray(true)</code> to add <strong>debugMessage</strong> key to 
+each formatted error entry. If you also want to add exception trace - pass flags instead:</p>
+<pre><code>use GraphQL\Error\Debug;
+$debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
+$result = GraphQL::executeQuery(/*args*/)-&gt;toArray($debug);
 </code></pre>
 
-<p>GraphQL clients like <strong>Relay</strong> or <strong>GraphiQL</strong> leverage this information to highlight 
-actual piece of query containing error. </p>
-<p>In some cases (like deep fragment fields) locations will include several entries to track down the 
-path to field with error in query.</p>
-<p><strong>Execution</strong> errors also contain <strong>path</strong> from the very root field to actual field value producing 
-an error (including indexes for array types and fieldNames for object types). So in complex situation 
-this path could look like this:</p>
-<pre><code class="php">'path' =&gt; [
-    'lastStoryPosted',
-    'author',
-    'friends',
-    3
-    'fieldWithException'
-]
+<p>This will make each error entry to look like this:</p>
+<pre><code class="php">&lt;?php
+[
+    'debugMessage' =&gt; 'Actual exception message',
+    'message' =&gt; 'Internal server error',
+    'category' =&gt; 'internal',
+    'locations' =&gt; [
+        ['line' =&gt; 10, 'column' =&gt; 2]
+    ],
+    'path' =&gt; [
+        'listField',
+        0,
+        'fieldWithException'
+    ],
+    'trace' =&gt; [
+        /* Formatted original exception trace */
+    ]
+];
 </code></pre>
 
-<h1 id="custom-error-formatting">Custom Error Formatting</h1>
-<p>If you want to apply custom formatting to errors - use <strong>GraphQL::executeAndReturnResult()</strong> instead
-of <strong>GraphQL::execute()</strong>.</p>
-<p>It has exactly the same <a href="../executing-queries/">signature</a>, but instead of array it 
-returns <code>GraphQL\Executor\ExecutionResult</code> instance which holds errors in public <strong>$errors</strong> 
-property and data in <strong>$data</strong> property.</p>
-<p>Each entry of <strong>$errors</strong> array contains instance of <code>GraphQL\Error\Error</code> which wraps original 
-exceptions thrown by resolvers. To access original exceptions use <code>$error-&gt;getPrevious()</code> method.
-But note that previous exception is only available for <strong>Execution</strong> errors and will be <code>null</code>
-for <strong>Syntax</strong> or <strong>Validation</strong> errors.</p>
+<p>If you prefer first resolver exception to be re-thrown, use following flags:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\GraphQL;
+use GraphQL\Error\Debug;
+$debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::RETHROW_INTERNAL_EXCEPTIONS;
+
+// Following will throw if there was an exception in resolver during execution:
+$result = GraphQL::executeQuery(/*args*/)-&gt;toArray($debug); 
+</code></pre>
+
+<h1 id="custom-error-handling-and-formatting">Custom Error Handling and Formatting</h1>
+<p>It is possible to define custom <strong>formatter</strong> and <strong>handler</strong> for result errors.</p>
+<p><strong>Formatter</strong> is responsible for converting instances of <a href="../reference/#graphqlerrorerror"><code>GraphQL\Error\Error</code></a> 
+to an array. <strong>Handler</strong> is useful for error filtering and logging. </p>
+<p>For example, these are default formatter and handler:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\GraphQL;
+use GraphQL\Error\Error;
+use GraphQL\Error\FormattedError;
+
+$myErrorFormatter = function(Error $error) {
+    return FormattedError::createFromException($error);
+};
+
+$myErrorHandler = function(array $errors, callable $formatter) {
+    return array_map($formatter, $errors);
+};
+
+$result = GraphQL::executeQuery(/* $args */)
+    -&gt;setErrorFormatter($myErrorFormatter)
+    -&gt;setErrorHandler($myErrorHandler)
+    -&gt;toArray();
+</code></pre>
+
+<p>Note that when you pass <a href="#debugging-tools">debug flags</a> to <strong>toArray()</strong> your custom formatter will still be 
+decorated with same debugging information mentioned above.</p>
 <h1 id="schema-errors">Schema Errors</h1>
 <p>So far we only covered errors which occur during query execution process. But schema definition can 
-also throw if there is an error in one of type definitions.</p>
+also throw <code>GraphQL\Error\InvariantViolation</code> if there is an error in one of type definitions.</p>
 <p>Usually such errors mean that there is some logical error in your schema and it is the only case 
 when it makes sense to return <code>500</code> error code for GraphQL endpoint:</p>
-<pre><code class="php">try {
+<pre><code class="php">&lt;?php
+use GraphQL\GraphQL;
+use GraphQL\Type\Schema;
+use GraphQL\Error\FormattedError;
+
+try {
     $schema = new Schema([
         // ...
     ]);
 
-    $body = GraphQL::execute($schema, $query);
+    $body = GraphQL::executeQuery($schema, $query);
     $status = 200;
 } catch(\Exception $e) {
-    $body = json_encode([
-        'message' =&gt; 'Unexpected error'
-    ]);
+    $body = [
+        'errors' =&gt; [FormattedError::createFromException($e)]
+    ];
     $status = 500;
 }
 
@@ -295,7 +365,7 @@ echo json_encode($body);
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../complementary-tools/" class="btn btn-neutral float-right" title="Complementary Tools">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../security/" class="btn btn-neutral float-right" title="Security">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../data-fetching/" class="btn btn-neutral" title="Fetching Data"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -327,7 +397,7 @@ echo json_encode($body);
         <span><a href="../data-fetching/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../complementary-tools/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../security/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

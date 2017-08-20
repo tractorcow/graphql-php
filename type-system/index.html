@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class=" current">
                     
@@ -103,7 +108,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="input-types/">Input Types</a>
+    <a class="" href="input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -112,6 +117,10 @@
                 <li class="">
                     
     <a class="" href="schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -133,7 +142,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -158,7 +177,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -173,11 +192,12 @@
             <div class="section">
               
                 <h1 id="type-system">Type System</h1>
-<p>To start using GraphQL you are expected to implement a type hierarchy and expose it as <a href="../type-system/schema/">Schema</a>. </p>
-<p>In <strong>graphql-php</strong> <code>type</code> is an instance of internal class from 
-<code>GraphQL\Type\Definition</code> namespace: <code>ScalarType</code>, <code>ObjectType</code>, <code>InterfaceType</code>, 
-<code>UnionType</code>, <code>InputObjectType</code> (or one of it's subclasses).</p>
-<p>But most of the types in your schema will be <a href="../type-system/object-types/">object types</a>.</p>
+<p>To start using GraphQL you are expected to implement a type hierarchy and expose it as <a href="schema/">Schema</a>. </p>
+<p>In graphql-php <strong>type</strong> is an instance of internal class from 
+<code>GraphQL\Type\Definition</code> namespace: <a href="object-types/"><code>ObjectType</code></a>, 
+<a href="interfaces/"><code>InterfaceType</code></a>, <a href="unions/"><code>UnionType</code></a>, <a href="input-types/"><code>InputObjectType</code></a>, 
+<a href="scalar-types/"><code>ScalarType</code></a>, <a href="enum-types/"><code>EnumType</code></a> (or one of subclasses).</p>
+<p>But most of the types in your schema will be <a href="object-types/">object types</a>.</p>
 <h1 id="type-definition-styles">Type Definition Styles</h1>
 <p>Several styles of type definitions are supported depending on your preferences.</p>
 <p>Inline definitions:</p>
@@ -218,39 +238,29 @@ class MyType extends ObjectType
 }
 </code></pre>
 
-<p>You can also mix-and-match styles for convenience. For example:</p>
-<pre><code class="php">&lt;?php
-namespace MyApp;
+<p>Using <a href="http://graphql.org/learn/schema/#type-language">GraphQL Type language</a>:</p>
+<pre><code class="graphql">schema {
+    query: Query
+    mutation: Mutation
+}
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
+type Query {
+    greetings(input: HelloInput!): String!
+}
 
-class BlogPostType extends ObjectType
-{
-    public function __construct()
-    {
-        $config = [
-            'fields' =&gt; [
-                'body' =&gt; new ObjectType([
-                    'name' =&gt; 'BlogPostBody',
-                    'fields' =&gt; [
-                        'html' =&gt; Type::string(),
-                        'text' =&gt; Type::string(),
-                    ]
-                ])
-            ]
-        ];
-        parent::__construct($config);
-    }
+input HelloInput {
+    firstName: String!
+    lastName: String
 }
 </code></pre>
 
+<p>Read more about type language definitions in a <a href="type-language/">dedicated docs section</a>.</p>
 <h1 id="type-registry">Type Registry</h1>
-<p>Every type must be presented in Schema by single instance (<strong>graphql-php</strong> 
-throws when it discovers several instances with the same <code>name</code> in schema).</p>
+<p>Every type must be presented in Schema by a single instance (<strong>graphql-php</strong> 
+throws when it discovers several instances with the same <strong>name</strong> in the schema).</p>
 <p>Therefore if you define your type as separate PHP class you must ensure that only one 
-instance of that class is added to schema.</p>
-<p>Typical way to do this is to create registry of your types:</p>
+instance of that class is added to the schema.</p>
+<p>The typical way to do this is to create a registry of your types:</p>
 <pre><code class="php">&lt;?php
 namespace MyApp;
 
@@ -289,10 +299,11 @@ class MyAType extends ObjectType
 }
 </code></pre>
 
-<p>Obviously you can automate this registry as you wish to reduce boilerplate or even 
+<p>Obviously, you can automate this registry as you wish to reduce boilerplate or even 
 introduce Dependency Injection Container if your types have other dependencies.</p>
-<p>Alternatively all methods of registry could be static if you prefer - then there is no need
-to pass it in constructor - instead just use use <code>TypeRegistry::myAType()</code> in your type definitions.</p>
+<p>Alternatively, all methods of the registry could be static - then there is no need
+to pass it in constructor - instead just use use <strong>TypeRegistry::myAType()</strong> in your 
+type definitions.</p>
               
             </div>
           </div>
@@ -303,7 +314,7 @@ to pass it in constructor - instead just use use <code>TypeRegistry::myAType()</
         <a href="object-types/" class="btn btn-neutral float-right" title="Object Types">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../getting-started/" class="btn btn-neutral" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../complementary-tools/" class="btn btn-neutral" title="Complementary Tools"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -329,7 +340,7 @@ to pass it in constructor - instead just use use <code>TypeRegistry::myAType()</
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../getting-started/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../complementary-tools/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="object-types/" style="color: #fcfcfc">Next &raquo;</a></span>

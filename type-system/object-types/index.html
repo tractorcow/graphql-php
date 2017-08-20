@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -118,7 +123,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -127,6 +132,10 @@
                 <li class="">
                     
     <a class="" href="../schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -148,7 +157,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -173,7 +192,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -188,9 +207,9 @@
             <div class="section">
               
                 <h1 id="object-type-definition">Object Type Definition</h1>
-<p>Object Type is the most frequently used primitive in typical GraphQL application.</p>
-<p>Conceptually Object Type is a collection of Fields. Each field in turn
-has it's own type which allows to build complex hierarchies.</p>
+<p>Object Type is the most frequently used primitive in a typical GraphQL application.</p>
+<p>Conceptually Object Type is a collection of Fields. Each field, in turn,
+has its own type which allows building complex hierarchies.</p>
 <p>In <strong>graphql-php</strong> object type is an instance of <code>GraphQL\Type\Definition\ObjectType</code> 
 (or one of it subclasses) which accepts configuration array in constructor:</p>
 <pre><code class="php">&lt;?php
@@ -243,7 +262,7 @@ $blogStory = new ObjectType([
 </code></pre>
 
 <p>This example uses <strong>inline</strong> style for Object Type definitions, but you can also use<br />
-<a href="../../type-system/#type-definition-styles">inheritance</a>.</p>
+<a href="../#type-definition-styles">inheritance or type language</a>.</p>
 <h1 id="configuration-options">Configuration options</h1>
 <p>Object type constructor expects configuration array. Below is a full list of available options:</p>
 <table>
@@ -262,8 +281,8 @@ $blogStory = new ObjectType([
 </tr>
 <tr>
 <td>fields</td>
-<td><code>array</code> or <code>callback</code> returning <code>array</code></td>
-<td><strong>Required</strong>. Array describing object fields. See <a href="#field-definitions">Fields</a> section below for expected structure of each array entry. See also section on <a href="#">Circular types</a> for explanation of when to use callback for this option.</td>
+<td><code>array</code> or <code>callable</code></td>
+<td><strong>Required</strong>. An array describing object fields or callable returning such an array. See <a href="#field-definitions">Fields</a> section below for expected structure of each array entry. See also the section on <a href="#recurring-and-circular-types">Circular types</a> for an explanation of when to use callable for this option.</td>
 </tr>
 <tr>
 <td>description</td>
@@ -272,18 +291,18 @@ $blogStory = new ObjectType([
 </tr>
 <tr>
 <td>interfaces</td>
-<td><code>array</code> or <code>callback</code> returning <code>array</code></td>
-<td>List of interfaces implemented by this type. See <a href="../../type-system/interface-types">Interface Types</a> for details. See also section on <a href="#">Circular types</a> for explanation of when to use callback for this option.</td>
+<td><code>array</code> or <code>callable</code></td>
+<td>List of interfaces implemented by this type or callable returning such a list. See <a href="../interfaces/">Interface Types</a> for details. See also the section on <a href="#recurring-and-circular-types">Circular types</a> for an explanation of when to use callable for this option.</td>
 </tr>
 <tr>
 <td>isTypeOf</td>
-<td><code>callback</code> returning <code>boolean</code></td>
-<td><strong>function($value, $context, GraphQL\Type\Definition\ResolveInfo $info)</strong> Expected to return <code>true</code> if <code>$value</code> qualifies for this type (see section about <a href="#">Abstract Type Resolution</a> for explanation).</td>
+<td><code>callable</code></td>
+<td><strong>function($value, $context, <a href="../../reference/#graphqltypedefinitionresolveinfo">ResolveInfo</a> $info)</strong><br> Expected to return <strong>true</strong> if <strong>$value</strong> qualifies for this type (see section about <a href="../interfaces/#interface-role-in-data-fetching">Abstract Type Resolution</a> for explanation).</td>
 </tr>
 <tr>
 <td>resolveField</td>
-<td><code>callback</code> returning <code>mixed</code></td>
-<td><strong>function($value, $args, $context, GraphQL\Type\Definition\ResolveInfo $info)</strong> Given the <code>$value</code> of this type it is expected to return value for field defined in <code>$info-&gt;fieldName</code>. Good place to define type-specific strategy for field resolution. See section on <a href="#">Data Fetching</a> for details.</td>
+<td><code>callable</code></td>
+<td><strong>function($value, $args, $context, <a href="../../reference/#graphqltypedefinitionresolveinfo">ResolveInfo</a> $info)</strong><br> Given the <strong>$value</strong> of this type, it is expected to return value for a field defined in <strong>$info-&gt;fieldName</strong>. A good place to define a type-specific strategy for field resolution. See section on <a href="../../data-fetching/">Data Fetching</a> for details.</td>
 </tr>
 </tbody>
 </table>
@@ -301,22 +320,27 @@ $blogStory = new ObjectType([
 <tr>
 <td>name</td>
 <td><code>string</code></td>
-<td><strong>Required.</strong> Name of the field. When not set - inferred from <strong>fields</strong> array key (read about <a href="#">shorthand field definition</a> below)</td>
+<td><strong>Required.</strong> Name of the field. When not set - inferred from <strong>fields</strong> array key (read about <a href="#shorthand-field-definitions">shorthand field definition</a> below)</td>
 </tr>
 <tr>
 <td>type</td>
 <td><code>Type</code></td>
-<td><strong>Required.</strong> Instance of internal or custom type. Note: type must be represented by single instance within schema (see also <a href="#">Type Registry</a>)</td>
+<td><strong>Required.</strong> An instance of internal or custom type. Note: type must be represented by a single instance within one schema (see also <a href="../#type-registry">Type Registry</a>)</td>
 </tr>
 <tr>
 <td>args</td>
 <td><code>array</code></td>
-<td>Array of possible type arguments. Each entry is expected to be an array with keys: <strong>name</strong>, <strong>type</strong>, <strong>description</strong>, <strong>defaultValue</strong>. See <a href="#field-arguments">Field Arguments</a> section below.</td>
+<td>An array of possible type arguments. Each entry is expected to be an array with keys: <strong>name</strong>, <strong>type</strong>, <strong>description</strong>, <strong>defaultValue</strong>. See <a href="#field-arguments">Field Arguments</a> section below.</td>
 </tr>
 <tr>
 <td>resolve</td>
-<td><code>callback</code></td>
-<td><strong>function($value, $args, $context, GraphQL\Type\Definition\ResolveInfo $info)</strong> Given the <code>$value</code> of this type it is expected to return value for current field. See section on <a href="#">Data Fetching</a> for details</td>
+<td><code>callable</code></td>
+<td><strong>function($value, $args, $context, <a href="../../reference/#graphqltypedefinitionresolveinfo">ResolveInfo</a> $info)</strong><br> Given the <strong>$value</strong> of this type, it is expected to return actual value of the current field. See section on <a href="../../data-fetching/">Data Fetching</a> for details</td>
+</tr>
+<tr>
+<td>complexity</td>
+<td><code>callable</code></td>
+<td><strong>function($childrenComplexity, $args)</strong><br> Used to restrict query complexity. The feature is disabled by default, read about <a href="../../security/#query-complexity-analysis">Security</a> to use it.</td>
 </tr>
 <tr>
 <td>description</td>
@@ -350,7 +374,7 @@ Each argument is an array with following options:</p>
 <tr>
 <td>type</td>
 <td><code>Type</code></td>
-<td><strong>Required.</strong> Instance of one of <a href="../input-types/">Input Types</a> (<code>scalar</code>, <code>enum</code>, <code>InputObjectType</code> + any combination of those with <code>nonNull</code> and <code>listOf</code> modifiers)</td>
+<td><strong>Required.</strong> Instance of one of <a href="../input-types/">Input Types</a> (<strong>scalar</strong>, <strong>enum</strong>, <strong>InputObjectType</strong> + any combination of those with <strong>nonNull</strong> and <strong>listOf</strong> modifiers)</td>
 </tr>
 <tr>
 <td>description</td>
@@ -379,7 +403,7 @@ Each argument is an array with following options:</p>
 ]
 </code></pre>
 
-<p>which is in turn equivalent of full form:</p>
+<p>which is in turn equivalent of the full form:</p>
 <pre><code class="php">'fields' =&gt; [
     ['name' =&gt; 'id', 'type' =&gt; Type::id()],
     ['name' =&gt; 'fieldName', 'type' =&gt; $fieldName]
@@ -390,10 +414,14 @@ Each argument is an array with following options:</p>
 <h1 id="recurring-and-circular-types">Recurring and circular types</h1>
 <p>Almost all real-world applications contain recurring or circular types. 
 Think user friends or nested comments for example. </p>
-<p><strong>graphql-php</strong> allows such types, but you have to use <code>callback</code> in 
+<p><strong>graphql-php</strong> allows such types, but you have to use <code>callable</code> in 
 option <strong>fields</strong> (and/or <strong>interfaces</strong>).</p>
 <p>For example:</p>
-<pre><code class="php">$userType = null;
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$userType = null;
 
 $userType = new ObjectType([
     'name' =&gt; 'User',
@@ -410,7 +438,7 @@ $userType = new ObjectType([
 ]);
 </code></pre>
 
-<p>Same example for <a href="#">inheritance style of type definitions</a> using <a href="#">TypeRegistry</a>:</p>
+<p>Same example for <a href="../#type-definition-styles">inheritance style of type definitions</a> using <a href="../#type-registry">TypeRegistry</a>:</p>
 <pre><code class="php">&lt;?php
 namespace MyApp;
 
@@ -456,14 +484,14 @@ class MyTypes
 
 <h1 id="field-resolution">Field Resolution</h1>
 <p>Field resolution is the primary mechanism in <strong>graphql-php</strong> for returning actual data for your fields.
-It is implemented using <code>resolveField</code> callback in type definition or <code>resolve</code>
-callback in field definition (which has precedence).</p>
-<p>Read section on <a href="">Data Fetching</a> for complete description of this process.</p>
+It is implemented using <strong>resolveField</strong> callable in type definition or <strong>resolve</strong>
+callable in field definition (which has precedence).</p>
+<p>Read the section on <a href="../../data-fetching/">Data Fetching</a> for a complete description of this process.</p>
 <h1 id="custom-metadata">Custom Metadata</h1>
-<p>All types in <strong>graphql-php</strong> accept configuration array. In some cases you may be interested in 
+<p>All types in <strong>graphql-php</strong> accept configuration array. In some cases, you may be interested in 
 passing your own metadata for type or field definition.</p>
 <p><strong>graphql-php</strong> preserves original configuration array in every type or field instance in 
-public property <code>$config</code>. Use it to implement app-level mappings and definitions.</p>
+public property <strong>$config</strong>. Use it to implement app-level mappings and definitions.</p>
               
             </div>
           </div>

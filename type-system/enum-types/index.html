@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -106,7 +111,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -115,6 +120,10 @@
                 <li class="">
                     
     <a class="" href="../schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -136,7 +145,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -161,7 +180,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -179,8 +198,9 @@
 <p>Enumeration types are a special kind of scalar that is restricted to a particular set 
 of allowed values. </p>
 <p>In <strong>graphql-php</strong> enum type is an instance of <code>GraphQL\Type\Definition\EnumType</code> 
-(or one of it subclasses) which accepts configuration array in constructor:</p>
-<pre><code class="php">use GraphQL\Type\Definition\EnumType;
+which accepts configuration array in constructor:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\EnumType;
 
 $episodeEnum = new EnumType([
     'name' =&gt; 'Episode',
@@ -202,10 +222,10 @@ $episodeEnum = new EnumType([
 ]);
 </code></pre>
 
-<p>This example uses <strong>inline</strong> style for Enum Type definition, but you can also use
-<a href="../../type-system/#type-definition-styles">inheritance</a>.</p>
+<p>This example uses an <strong>inline</strong> style for Enum Type definition, but you can also use
+<a href="../#type-definition-styles">inheritance or type language</a>.</p>
 <h1 id="configuration-options">Configuration options</h1>
-<p>Enum Type constructor accepts array with following options:</p>
+<p>Enum Type constructor accepts an array with following options:</p>
 <table>
 <thead>
 <tr>
@@ -218,7 +238,7 @@ $episodeEnum = new EnumType([
 <tr>
 <td>name</td>
 <td><code>string</code></td>
-<td><strong>Required.</strong> Name of the type. When not set - inferred from array key (read about <a href="#">shorthand field definition</a> below)</td>
+<td><strong>Required.</strong> Name of the type. When not set - inferred from array key (read about <a href="#shorthand-definitions">shorthand field definition</a> below)</td>
 </tr>
 <tr>
 <td>description</td>
@@ -245,7 +265,7 @@ $episodeEnum = new EnumType([
 <tr>
 <td>name</td>
 <td><code>string</code></td>
-<td><strong>Required.</strong> Name of the item. When not set - inferred from array key (read about <a href="#">shorthand field definition</a> below)</td>
+<td><strong>Required.</strong> Name of the item. When not set - inferred from array key (read about <a href="#shorthand-definitions">shorthand field definition</a> below)</td>
 </tr>
 <tr>
 <td>value</td>
@@ -267,7 +287,10 @@ $episodeEnum = new EnumType([
 <h1 id="shorthand-definitions">Shorthand definitions</h1>
 <p>If internal representation of enumerated item is the same as item name, then you can use
 following shorthand for definition:</p>
-<pre><code class="php">$episodeEnum = new EnumType([
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\EnumType;
+
+$episodeEnum = new EnumType([
     'name' =&gt; 'Episode',
     'description' =&gt; 'One of the films in the Star Wars Trilogy',
     'values' =&gt; ['NEWHOPE', 'EMPIRE', 'JEDI']
@@ -275,19 +298,10 @@ following shorthand for definition:</p>
 </code></pre>
 
 <p>which is equivalent of:</p>
-<pre><code class="php">$episodeEnum = new EnumType([
-    'name' =&gt; 'Episode',
-    'description' =&gt; 'One of the films in the Star Wars Trilogy',
-    'values' =&gt; [
-        'NEWHOPE' =&gt; 'NEWHOPE', 
-        'EMPIRE' =&gt; 'EMPIRE', 
-        'JEDI' =&gt; 'JEDI'
-    ]
-]);
-</code></pre>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\EnumType;
 
-<p>which is in turn equivalent of:</p>
-<pre><code class="php">$episodeEnum = new EnumType([
+$episodeEnum = new EnumType([
     'name' =&gt; 'Episode',
     'description' =&gt; 'One of the films in the Star Wars Trilogy',
     'values' =&gt; [
@@ -298,8 +312,11 @@ following shorthand for definition:</p>
 ]);
 </code></pre>
 
-<p>which is in turn equivalent of full form:</p>
-<pre><code class="php">$episodeEnum = new EnumType([
+<p>which is in turn equivalent of the full form:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\EnumType;
+
+$episodeEnum = new EnumType([
     'name' =&gt; 'Episode',
     'description' =&gt; 'One of the films in the Star Wars Trilogy',
     'values' =&gt; [
@@ -311,10 +328,11 @@ following shorthand for definition:</p>
 </code></pre>
 
 <h1 id="field-resolution">Field Resolution</h1>
-<p>When object field is of Enum Type, field resolver is expected to return internal 
+<p>When object field is of Enum Type, field resolver is expected to return an internal 
 representation of corresponding Enum item (<strong>value</strong> in config). <strong>graphql-php</strong> will 
 then serialize this <strong>value</strong> to <strong>name</strong> to include in response:</p>
-<pre><code class="php">use GraphQL\Type\Definition\EnumType;
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\ObjectType;
 
 $episodeEnum = new EnumType([
@@ -346,30 +364,34 @@ $heroType = new ObjectType([
             }
         ]
     ]
-])
+]);
 </code></pre>
 
-<p>Reverse is true when enum is used as input type (e.g. as field argument). 
+<p>The Reverse is true when the enum is used as input type (e.g. as field argument). 
 GraphQL will treat enum input as <strong>name</strong> and convert it into <strong>value</strong> before passing to your app.</p>
 <p>For example, given object type definition:</p>
-<pre><code class="php">$heroType = new ObjectType([
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+
+$heroType = new ObjectType([
     'name' =&gt; 'Hero',
     'fields' =&gt; [
         'appearsIn' =&gt; [
             'type' =&gt; Type::boolean(),
             'args' =&gt; [
                 'episode' =&gt; Type::nonNull($enumType)
-            ]
+            ],
             'resolve' =&gt; function($_value, $args) {
                 return $args['episode'] === 5 ? true : false; 
             }
         ]
     ]
-])
+]);
 </code></pre>
 
 <p>Then following query:</p>
-<pre><code>fragment on Hero {
+<pre><code class="graphql">fragment on Hero {
     appearsInNewHope: appearsIn(NEWHOPE)
     appearsInEmpire: appearsIn(EMPIRE)
 }

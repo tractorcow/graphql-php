@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Complementary Tools - graphql-php</title>
+  <title>How it works - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Complementary Tools";
-    var mkdocs_page_input_path = "complementary-tools.md";
-    var mkdocs_page_url = "/complementary-tools/";
+    var mkdocs_page_name = "How it works";
+    var mkdocs_page_input_path = "how-it-works.md";
+    var mkdocs_page_url = "/how-it-works/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -57,18 +57,9 @@
     <a class="" href="../getting-started/">Getting Started</a>
 	    </li>
           
-            <li class="toctree-l1 current">
+            <li class="toctree-l1">
 		
-    <a class="current" href="./">Complementary Tools</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#integrations">Integrations</a></li>
-    
-
-    <li class="toctree-l2"><a href="#tools">Tools</a></li>
-    
-
-    </ul>
+    <a class="" href="../complementary-tools/">Complementary Tools</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -142,9 +133,27 @@
     <a class="" href="../security/">Security</a>
 	    </li>
           
-            <li class="toctree-l1">
+            <li class="toctree-l1 current">
 		
-    <a class="" href="../how-it-works/">How it works</a>
+    <a class="current" href="./">How it works</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#overview">Overview</a></li>
+    
+
+    <li class="toctree-l2"><a href="#parsing">Parsing</a></li>
+    
+
+    <li class="toctree-l2"><a href="#validating">Validating</a></li>
+    
+
+    <li class="toctree-l2"><a href="#executing">Executing</a></li>
+    
+
+    <li class="toctree-l2"><a href="#errors-explained">Errors explained</a></li>
+    
+
+    </ul>
 	    </li>
           
             <li class="toctree-l1">
@@ -174,7 +183,7 @@
     
       
     
-    <li>Complementary Tools</li>
+    <li>How it works</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -184,22 +193,33 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="integrations">Integrations</h1>
+                <h1 id="overview">Overview</h1>
+<p>Following reading describes implementation details of query execution process. It may clarify some 
+internals of GraphQL runtime but is not required to use it.</p>
+<h1 id="parsing">Parsing</h1>
+<p>TODOC</p>
+<h1 id="validating">Validating</h1>
+<p>TODOC</p>
+<h1 id="executing">Executing</h1>
+<p>TODOC</p>
+<h1 id="errors-explained">Errors explained</h1>
+<p>There are 3 types of errors in GraphQL:</p>
 <ul>
-<li><a href="https://github.com/ivome/graphql-relay-php">Integration with Relay</a></li>
-<li><a href="https://github.com/Folkloreatelier/laravel-graphql">Integration with Laravel 5</a> + <a href="https://github.com/nuwave/laravel-graphql-relay">Relay Helpers for Laravel</a></li>
-<li><a href="https://github.com/overblog/GraphQLBundle">Symfony Bundle</a> by Overblog</li>
-<li>Define types with Doctrine ORM annotations (<a href="https://github.com/Ecodev/graphql-doctrine">for PHP7.1</a>, for <a href="https://github.com/rahuljayaraman/doctrine-graphql">earlier PHP versions</a>)</li>
-<li>Out of the box integration with any PSR-7 compatible framework (like <a href="http://slimframework.com">Slim</a> or <a href="http://zendframework.github.io/zend-expressive/">Zend Expressive</a>) via <a href="../executing-queries.md/#using-server">Standard Server</a></li>
+<li><strong>Syntax</strong>: query has invalid syntax and could not be parsed;</li>
+<li><strong>Validation</strong>: query is incompatible with type system (e.g. unknown field is requested);</li>
+<li><strong>Execution</strong>: occurs when some field resolver throws (or returns unexpected value).</li>
 </ul>
-<h1 id="tools">Tools</h1>
-<ul>
-<li><a href="https://github.com/graphql/graphiql">GraphiQL</a> - An in-browser IDE for exploring GraphQL</li>
-<li><a href="https://chrome.google.com/webstore/detail/chromeiql/fkkiamalmpiidkljmicmjfbieiclmeij">ChromeiQL</a>
-  or <a href="https://chrome.google.com/webstore/detail/graphiql-feen/mcbfdonlkfpbfdpimkjilhdneikhfklp">GraphiQL Feen</a> -
-  GraphiQL as Google Chrome extension</li>
-<li><a href="https://github.com/overblog/dataloader-php">DataLoader PHP</a> - as a ready implementation for <a href="../data-fetching/#solving-n1-problem">deferred resolvers</a></li>
-</ul>
+<p>Obviously, when <strong>Syntax</strong> or <strong>Validation</strong> error is detected - the process is interrupted and 
+the query is not executed.</p>
+<p>Execution process never throws exceptions. Instead, all errors are caught and collected in 
+execution result.</p>
+<p>GraphQL is forgiving to <strong>Execution</strong> errors which occur in resolvers of nullable fields. 
+If such field throws or returns unexpected value the value of the field in response will be simply 
+replaced with <strong>null</strong> and error entry will be registered.</p>
+<p>If an exception is thrown in the non-null field - error bubbles up to the first nullable field. 
+This nullable field is replaced with <strong>null</strong> and error entry is added to the result. 
+If all fields up to the root are non-null - <strong>data</strong> entry will be removed from the result<br />
+and only <strong>errors</strong> key will be presented.</p>
               
             </div>
           </div>
@@ -207,10 +227,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../type-system/" class="btn btn-neutral float-right" title="Introduction">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../reference/" class="btn btn-neutral float-right" title="Class Reference">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../getting-started/" class="btn btn-neutral" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../security/" class="btn btn-neutral" title="Security"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -236,10 +256,10 @@
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../getting-started/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../security/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../type-system/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../reference/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

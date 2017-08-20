@@ -80,7 +80,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -112,7 +117,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../type-system/input-types/">Input Types</a>
+    <a class="" href="../type-system/input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -121,6 +126,10 @@
                 <li class="">
                     
     <a class="" href="../type-system/schema/">Schema</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-system/type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -142,7 +151,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -179,7 +198,7 @@
               
                 <h1 id="prerequisites">Prerequisites</h1>
 <p>This documentation assumes your familiarity with GraphQL concepts. If it is not the case - 
-first learn about  GraphQL on <a href="http://graphql.org/learn/">official website</a>.</p>
+first learn about GraphQL on <a href="http://graphql.org/learn/">the official website</a>.</p>
 <h1 id="installation">Installation</h1>
 <p>Using <a href="https://getcomposer.org/doc/00-intro.md">composer</a>, simply run:</p>
 <pre><code class="sh">composer require webonyx/graphql-php
@@ -191,7 +210,7 @@ they are explained in <a href="https://github.com/webonyx/graphql-php/blob/maste
 <h1 id="install-tools-optional">Install Tools (optional)</h1>
 <p>While it is possible to communicate with GraphQL API using regular HTTP tools it is way 
 more convenient for humans to use <a href="https://github.com/graphql/graphiql">GraphiQL</a> - an in-browser 
-ide for exploring GraphQL APIs.</p>
+IDE for exploring GraphQL APIs.</p>
 <p>It provides syntax-highlighting, auto-completion and auto-generated documentation for 
 GraphQL API.</p>
 <p>The easiest way to use it is to install one of the existing Google Chrome extensions:</p>
@@ -199,10 +218,10 @@ GraphQL API.</p>
 <li><a href="https://chrome.google.com/webstore/detail/chromeiql/fkkiamalmpiidkljmicmjfbieiclmeij">ChromeiQL</a></li>
 <li><a href="https://chrome.google.com/webstore/detail/graphiql-feen/mcbfdonlkfpbfdpimkjilhdneikhfklp">GraphiQL Feen</a></li>
 </ul>
-<p>Alternatively you can follow instructions on <a href="https://github.com/graphql/graphiql">GraphiQL</a>
+<p>Alternatively, you can follow instructions on <a href="https://github.com/graphql/graphiql">the GraphiQL</a>
 page and install it locally.</p>
 <h1 id="hello-world">Hello World</h1>
-<p>Let's create type system that will be capable to process following simple query:</p>
+<p>Let's create a type system that will be capable to process following simple query:</p>
 <pre><code>query {
   echo(message: &quot;Hello World&quot;)
 }
@@ -227,18 +246,19 @@ $queryType = new ObjectType([
         ],
     ],
 ]);
+
 </code></pre>
 
 <p>(Note: type definition can be expressed in <a href="../type-system/#type-definition-styles">different styles</a>, 
 but this example uses <strong>inline</strong> style for simplicity)</p>
-<p>The interesting piece here is <code>resolve</code> option of field definition. It is responsible for retuning 
-value of our field. Values of <strong>scalar</strong> fields will be directly included in response while values of 
-<strong>complex</strong> fields (objects, interfaces, unions) will be passed down to nested field resolvers 
+<p>The interesting piece here is <strong>resolve</strong> option of field definition. It is responsible for returning 
+a value of our field. Values of <strong>scalar</strong> fields will be directly included in response while values of 
+<strong>composite</strong> fields (objects, interfaces, unions) will be passed down to nested field resolvers 
 (not in this example though).</p>
-<p>Now when our type is ready, let's create GraphQL endpoint for it <code>graphql.php</code>:</p>
+<p>Now when our type is ready, let's create GraphQL endpoint file for it <strong>graphql.php</strong>:</p>
 <pre><code class="php">&lt;?php
 use GraphQL\GraphQL;
-use GraphQL\Schema;
+use GraphQL\Type\Schema;
 
 $schema = new Schema([
     'query' =&gt; $queryType
@@ -251,29 +271,33 @@ $variableValues = isset($input['variables']) ? $input['variables'] : null;
 
 try {
     $rootValue = ['prefix' =&gt; 'You said: '];
-    $result = GraphQL::execute($schema, $query, $rootValue, null, $variableValues);
+    $result = GraphQL::executeQuery($schema, $query, $rootValue, null, $variableValues);
+    $output = $result-&gt;toArray();
 } catch (\Exception $e) {
-    $result = [
-        'error' =&gt; [
-            'message' =&gt; $e-&gt;getMessage()
+    $output = [
+        'errors' =&gt; [
+            [
+                'message' =&gt; $e-&gt;getMessage()
+            ]
         ]
     ];
 }
-header('Content-Type: application/json; charset=UTF-8');
-echo json_encode($result);
+header('Content-Type: application/json');
+echo json_encode($output);
 </code></pre>
 
-<p>Our example is ready. Try it by running:</p>
+<p>Our example is finished. Try it by running:</p>
 <pre><code class="sh">php -S localhost:8000 graphql.php
-curl http://localhost:8000 -d '{&quot;query&quot;: &quot;query { echo(message: \&quot;Hello World\&quot;) }&quot; }'
+curl http://localhost:8080 -d '{&quot;query&quot;: &quot;query { echo(message: \&quot;Hello World\&quot;) }&quot; }'
 </code></pre>
 
-<p>Check out the full <a href="https://github.com/webonyx/graphql-php/blob/master/examples/00-hello-world">source code</a> of this example.</p>
+<p>Check out the full <a href="https://github.com/webonyx/graphql-php/blob/master/examples/00-hello-world">source code</a> of this example
+which also includes simple mutation.</p>
 <p>Obviously hello world only scratches the surface of what is possible. 
 So check out next example, which is closer to real-world apps.
 Or keep reading about <a href="../type-system/">schema definition</a>.</p>
 <h1 id="blog-example">Blog example</h1>
-<p>It is often easier to start with full-featured example and then get back to documentation
+<p>It is often easier to start with a full-featured example and then get back to documentation
 for your own work. </p>
 <p>Check out <a href="https://github.com/webonyx/graphql-php/tree/master/examples/01-blog">Blog example of GraphQL API</a>.
 It is quite close to real-world GraphQL hierarchies. Follow instructions and try it yourself in ~10 minutes.</p>
@@ -284,7 +308,7 @@ It is quite close to real-world GraphQL hierarchies. Follow instructions and try
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../type-system/" class="btn btn-neutral float-right" title="Introduction">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../complementary-tools/" class="btn btn-neutral float-right" title="Complementary Tools">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href=".." class="btn btn-neutral" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -316,7 +340,7 @@ It is quite close to real-world GraphQL hierarchies. Follow instructions and try
         <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../type-system/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../complementary-tools/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

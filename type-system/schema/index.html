@@ -59,7 +59,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Type System</span>
+    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Type Definitions</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -91,7 +96,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../input-types/">Input Types</a>
+    <a class="" href="../input-types/">Mutations and Input Types</a>
                 </li>
                 <li class="">
                     
@@ -111,7 +116,20 @@
     <li class="toctree-l3"><a href="#configuration-options">Configuration Options</a></li>
     
 
+    <li class="toctree-l3"><a href="#using-config-class">Using config class</a></li>
+    
+
+    <li class="toctree-l3"><a href="#lazy-loading-of-types">Lazy loading of types</a></li>
+    
+
+    <li class="toctree-l3"><a href="#schema-validation">Schema Validation</a></li>
+    
+
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../type-language/">Using Type Language</a>
                 </li>
     </ul>
 	    </li>
@@ -133,7 +151,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../complementary-tools/">Complementary Tools</a>
+    <a class="" href="../../security/">Security</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../how-it-works/">How it works</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../reference/">Class Reference</a>
 	    </li>
           
         </ul>
@@ -158,7 +186,7 @@
     
       
         
-          <li>Type System &raquo;</li>
+          <li>Type Definitions &raquo;</li>
         
       
     
@@ -173,28 +201,31 @@
             <div class="section">
               
                 <h1 id="schema-definition">Schema Definition</h1>
-<p>Schema is a container of your type hierarchy, which accepts root types in constructor and provides
+<p>The schema is a container of your type hierarchy, which accepts root types in a constructor and provides
 methods for receiving information about your types to internal GrahpQL tools.</p>
-<p>In <strong>graphql-php</strong> schema is an instance of <code>GraphQL\Schema</code> which accepts configuration array 
-in constructor:</p>
-<pre><code class="php">$schema = new Schema([
+<p>In <strong>graphql-php</strong> schema is an instance of <a href="../../reference/#graphqltypeschema"><code>GraphQL\Type\Schema</code></a> 
+which accepts configuration array in a constructor:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Schema;
+
+$schema = new Schema([
     'query' =&gt; $queryType, 
     'mutation' =&gt; $mutationType,
 ]);
 </code></pre>
 
-<p>See possible constructor options <a href="#configuration-options">below</a></p>
+<p>See possible constructor options <a href="#configuration-options">below</a>.</p>
 <h1 id="query-and-mutation-types">Query and Mutation types</h1>
-<p>Schema consists of two root types:</p>
+<p>The schema consists of two root types:</p>
 <ul>
-<li><code>Query</code> type is a surface of your read API</li>
-<li><code>Mutation</code> type (optional) exposes write API by declaring all possible mutations in your app. </li>
+<li><strong>Query</strong> type is a surface of your read API</li>
+<li><strong>Mutation</strong> type (optional) exposes write API by declaring all possible mutations in your app. </li>
 </ul>
 <p>Query and Mutation types are regular <a href="../object-types/">object types</a> containing root-level fields 
 of your API:</p>
-<pre><code class="php">use GraphQL\Type\Definition\ObjectType;
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Schema;
 
 $queryType = new ObjectType([
     'name' =&gt; 'Query',
@@ -204,7 +235,7 @@ $queryType = new ObjectType([
             'resolve' =&gt; function() {
                 return 'Hello World!';
             }
-        ]
+        ],
         'hero' =&gt; [
             'type' =&gt; $characterInterface,
             'args' =&gt; [
@@ -222,8 +253,8 @@ $queryType = new ObjectType([
 $mutationType = new ObjectType([
     'name' =&gt; 'Mutation',
     'fields' =&gt; [
-        'createReviewForEpisode' =&gt; [
-            'type' =&gt; $createReviewForEpisodeMutation,
+        'createReview' =&gt; [
+            'type' =&gt; $createReviewOutput,
             'args' =&gt; [
                 'episode' =&gt; $episodeEnum,
                 'review' =&gt; $reviewInputObject
@@ -236,14 +267,15 @@ $mutationType = new ObjectType([
 ]);
 </code></pre>
 
-<p>Keep in mind that other than the special meaning of declaring surface area of your API, 
+<p>Keep in mind that other than the special meaning of declaring a surface area of your API, 
 those types are the same as any other <a href="../object-types/">object type</a>, and their fields work 
 exactly the same way.</p>
 <p><strong>Mutation</strong> type is also just a regular object type. The difference is in semantics. 
 Field names of Mutation type are usually verbs and they almost always have arguments - quite often 
-with complex input values (see <a href="../input-types/">Input Types</a> for details).</p>
+with complex input values (see <a href="../input-types/">Mutations and Input Types</a> for details).</p>
 <h1 id="configuration-options">Configuration Options</h1>
-<p>Schema constructor expects an array with following options:</p>
+<p>Schema constructor expects an instance of <a href="../../reference/#graphqltypeschemaconfig"><code>GraphQL\Type\SchemaConfig</code></a> 
+or an array with following options:</p>
 <table>
 <thead>
 <tr>
@@ -271,15 +303,110 @@ with complex input values (see <a href="../input-types/">Input Types</a> for det
 <tr>
 <td>directives</td>
 <td><code>Directive[]</code></td>
-<td>Full list of <a href="../directives/">directives</a> supported by your schema. By default contains built-in <code>@skip</code> and <code>@include</code> directives.<br><br> If you pass your own directives and still want to use built-in directives - add them explicitly. For example: <code>array_merge(GraphQL::getInternalDirectives(), [$myCustomDirective]</code></td>
+<td>A full list of <a href="../directives/">directives</a> supported by your schema. By default, contains built-in <strong>@skip</strong> and <strong>@include</strong> directives.<br><br> If you pass your own directives and still want to use built-in directives - add them explicitly. For example:<br><br> <em>array_merge(GraphQL::getStandardDirectives(), [$myCustomDirective]);</em></td>
 </tr>
 <tr>
 <td>types</td>
 <td><code>ObjectType[]</code></td>
-<td>List of object types which cannot be detected by <strong>graphql-php</strong> during static schema analysis.<br><br>Most often it happens when object type is never referenced in fields directly, but is still a part of schema because it implements an interface which resolves to this object type in it's <code>resolveType</code> callback. <br><br> Note that you are not required to pass all of your types here - it is simply a workaround for concrete use-case.</td>
+<td>List of object types which cannot be detected by <strong>graphql-php</strong> during static schema analysis.<br><br>Most often it happens when the object type is never referenced in fields directly but is still a part of a schema because it implements an interface which resolves to this object type in its <strong>resolveType</strong> callable. <br><br> Note that you are not required to pass all of your types here - it is simply a workaround for concrete use-case.</td>
+</tr>
+<tr>
+<td>typeLoader</td>
+<td><code>callable</code></td>
+<td><strong>function($name)</strong> Expected to return type instance given the name. Must always return the same instance if called multiple times. See section below on lazy type loading.</td>
 </tr>
 </tbody>
 </table>
+<h1 id="using-config-class">Using config class</h1>
+<p>If you prefer fluid interface for config with auto-completion in IDE and static time validation, 
+use <a href="../../reference/#graphqltypeschemaconfig"><code>GraphQL\Type\SchemaConfig</code></a> instead of an array:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\SchemaConfig;
+use GraphQL\Type\Schema;
+
+$config = SchemaConfig::create()
+    -&gt;setQuery($myQueryType)
+    -&gt;setTypeLoader($myTypeLoader);
+
+$schema = new Schema($config);
+</code></pre>
+
+<h1 id="lazy-loading-of-types">Lazy loading of types</h1>
+<p>By default, the schema will scan all of your type, field and argument definitions to serve GraphQL queries. 
+It may cause performance overhead when there are many types in the schema. </p>
+<p>In this case, it is recommended to pass <strong>typeLoader</strong> option to schema constructor and define all 
+of your object <strong>fields</strong> as callbacks.</p>
+<p>Type loading concept is very similar to PHP class loading, but keep in mind that <strong>typeLoader</strong> must
+always return the same instance of a type.</p>
+<p>Usage example:</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Schema;
+
+class Types
+{
+    private $types = [];
+
+    public function get($name)
+    {
+        if (!isset($this-&gt;types[$name])) {
+            $this-&gt;types[$name] = $this-&gt;{$name}();
+        }
+        return $this-&gt;types[$name];
+    }
+
+    private function MyTypeA()
+    {
+        return new ObjectType([
+            'name' =&gt; 'MyTypeA',
+            'fields' =&gt; function() {
+                return [
+                    'b' =&gt; ['type' =&gt; $this-&gt;get('MyTypeB')]
+                ];
+            }
+        ]);
+    }
+
+    private function MyTypeB()
+    {
+        // ...
+    }
+}
+
+$registry = new Types();
+
+$schema = new Schema([
+    'query' =&gt; $registry-&gt;get('Query'),
+    'typeLoader' =&gt; function($name) use ($registry) {
+        return $registry-&gt;get($name);
+    }
+]);
+</code></pre>
+
+<h1 id="schema-validation">Schema Validation</h1>
+<p>By default, the schema is created with only shallow validation of type and field definitions<br />
+(because validation requires full schema scan and is very costly on bigger schemas).</p>
+<p>But there is a special method <strong>assertValid()</strong> on schema instance which throws 
+<code>GraphQL\Error\InvariantViolation</code> exception when it encounters any error, like:</p>
+<ul>
+<li>Invalid types used for fields/arguments</li>
+<li>Missing interface implementations</li>
+<li>Invalid interface implementations</li>
+<li>Other schema errors...</li>
+</ul>
+<p>Schema validation is supposed to be used in CLI commands or during build step of your app.
+Don't call it in web requests in production. </p>
+<p>Usage example:</p>
+<pre><code class="php">&lt;?php
+try {
+    $schema = new GraphQL\Type\Schema([
+        'query' =&gt; $myQueryType
+    ]);
+    $schema-&gt;assertValid();
+} catch (GraphQL\Error\InvariantViolation $e) {
+    echo $e-&gt;getMessage();
+}
+</code></pre>
               
             </div>
           </div>
@@ -287,7 +414,7 @@ with complex input values (see <a href="../input-types/">Input Types</a> for det
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../executing-queries/" class="btn btn-neutral float-right" title="Executing Queries">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../type-language/" class="btn btn-neutral float-right" title="Using Type Language">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../directives/" class="btn btn-neutral" title="Directives"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -319,7 +446,7 @@ with complex input values (see <a href="../input-types/">Input Types</a> for det
         <span><a href="../directives/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../../executing-queries/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../type-language/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
