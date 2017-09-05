@@ -192,6 +192,7 @@
             <div class="section">
               
                 <h1 id="defining-your-schema">Defining your schema</h1>
+<p>Since 0.9.0</p>
 <p><a href="http://graphql.org/learn/schema/#type-language">Type language</a> is a convenient way to define your schema,
 especially with IDE autocompletion and syntax validation.</p>
 <p>Here is a simple schema defined in GraphQL type language (e.g. in a separate <strong>schema.graphql</strong> file):</p>
@@ -224,6 +225,7 @@ because it is impossible to resolve actual implementations during execution.</p>
 <p>Also, we have to rely on <a href="../../data-fetching/#default-field-resolver">default field resolver</a> and <strong>root value</strong> in 
 order to execute a query against this schema.</p>
 <h1 id="defining-resolvers">Defining resolvers</h1>
+<p>Since 0.10.0</p>
 <p>In order to enable <strong>Interfaces</strong>, <strong>Unions</strong> and custom field resolvers you can pass the second argument: 
 <strong>type config decorator</strong> to schema builder. </p>
 <p>It accepts default type config produced by the builder and is expected to add missing options like 
@@ -243,6 +245,7 @@ $schema = BuildSchema::build($contents, $typeConfigDecorator);
 </code></pre>
 
 <h1 id="performance-considerations">Performance considerations</h1>
+<p>Since 0.10.0</p>
 <p>Method <strong>build()</strong> produces a <a href="../schema/#lazy-loading-of-types">lazy schema</a>
 automatically, so it works efficiently even with very large schemas.</p>
 <p>But parsing type definition file on each request is suboptimal, so it is recommended to cache 
