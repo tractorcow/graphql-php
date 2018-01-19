@@ -62,18 +62,23 @@
         },
         {
             "location": "/complementary-tools/",
-            "text": "Integrations\n\n\n\n\nIntegration with Relay\n\n\nIntegration with Laravel 5\n + \nRelay Helpers for Laravel\n\n\nSymfony Bundle\n by Overblog\n\n\nDefine types with Doctrine ORM annotations (\nfor PHP7.1\n, for \nearlier PHP versions\n)\n\n\nOut of the box integration with any PSR-7 compatible framework (like \nSlim\n or \nZend Expressive\n) via \nStandard Server\n\n\nPSR 15 compliant middleware\n for the Standard Server (experimental)\n\n\n\n\nTools\n\n\n\n\nGraphiQL\n - An in-browser IDE for exploring GraphQL\n\n\nChromeiQL\n\n  or \nGraphiQL Feen\n -\n  GraphiQL as Google Chrome extension\n\n\nDataLoader PHP\n - as a ready implementation for \ndeferred resolvers",
+            "text": "Integrations\n\n\n\n\nIntegration with Relay\n\n\nIntegration with Laravel 5\n + \nRelay Helpers for Laravel\n\n\nSymfony Bundle\n by Overblog\n\n\nOut of the box integration with any PSR-7 compatible framework (like \nSlim\n or \nZend Expressive\n) via \nStandard Server\n\n\n\n\nGraphQL PHP Tools\n\n\n\n\nDefine types with Doctrine ORM annotations (\nfor PHP7.1\n, for \nearlier PHP versions\n)\n\n\nDataLoader PHP\n - as a ready implementation for \ndeferred resolvers\n\n\nPSR 15 compliant middleware\n for the Standard Server (experimental)\n\n\nGraphQL Uploads\n for the Standard Server\n\n\n\n\nGeneral GraphQL Tools\n\n\n\n\nGraphiQL\n - An in-browser IDE for exploring GraphQL\n\n\nChromeiQL\n\n  or \nGraphiQL Feen\n -\n  GraphiQL as Google Chrome extension",
             "title": "Complementary Tools"
         },
         {
             "location": "/complementary-tools/#integrations",
-            "text": "Integration with Relay  Integration with Laravel 5  +  Relay Helpers for Laravel  Symfony Bundle  by Overblog  Define types with Doctrine ORM annotations ( for PHP7.1 , for  earlier PHP versions )  Out of the box integration with any PSR-7 compatible framework (like  Slim  or  Zend Expressive ) via  Standard Server  PSR 15 compliant middleware  for the Standard Server (experimental)",
+            "text": "Integration with Relay  Integration with Laravel 5  +  Relay Helpers for Laravel  Symfony Bundle  by Overblog  Out of the box integration with any PSR-7 compatible framework (like  Slim  or  Zend Expressive ) via  Standard Server",
             "title": "Integrations"
         },
         {
-            "location": "/complementary-tools/#tools",
-            "text": "GraphiQL  - An in-browser IDE for exploring GraphQL  ChromeiQL \n  or  GraphiQL Feen  -\n  GraphiQL as Google Chrome extension  DataLoader PHP  - as a ready implementation for  deferred resolvers",
-            "title": "Tools"
+            "location": "/complementary-tools/#graphql-php-tools",
+            "text": "Define types with Doctrine ORM annotations ( for PHP7.1 , for  earlier PHP versions )  DataLoader PHP  - as a ready implementation for  deferred resolvers  PSR 15 compliant middleware  for the Standard Server (experimental)  GraphQL Uploads  for the Standard Server",
+            "title": "GraphQL PHP Tools"
+        },
+        {
+            "location": "/complementary-tools/#general-graphql-tools",
+            "text": "GraphiQL  - An in-browser IDE for exploring GraphQL  ChromeiQL \n  or  GraphiQL Feen  -\n  GraphiQL as Google Chrome extension",
+            "title": "General GraphQL Tools"
         },
         {
             "location": "/type-system/",
