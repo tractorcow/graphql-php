@@ -115,6 +115,9 @@
     <li class="toctree-l3"><a href="#defining-your-schema">Defining your schema</a></li>
     
 
+    <li class="toctree-l3"><a href="#defining-resolvers">Defining resolvers</a></li>
+    
+
     <li class="toctree-l3"><a href="#performance-considerations">Performance considerations</a></li>
     
 
@@ -221,6 +224,26 @@ $schema = BuildSchema::build($contents);
 <p>By default, such schema is created without any resolvers.</p>
 <p>We have to rely on <a href="../../data-fetching/#default-field-resolver">default field resolver</a> and <strong>root value</strong> in 
 order to execute a query against this schema.</p>
+<h1 id="defining-resolvers">Defining resolvers</h1>
+<p>Since 0.10.0</p>
+<p>In order to enable <strong>Interfaces</strong>, <strong>Unions</strong> and custom field resolvers you can pass the second argument:
+<strong>type config decorator</strong> to schema builder.</p>
+<p>It accepts default type config produced by the builder and is expected to add missing options like
+<a href="../interfaces/#configuration-options"><strong>resolveType</strong></a> for interface types or
+<a href="../object-types/#configuration-options"><strong>resolveField</strong></a> for object types.</p>
+<pre><code class="php">&lt;?php
+use GraphQL\Utils\BuildSchema;
+
+$typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
+    $name = $typeConfig['name'];
+    // ... add missing options to $typeConfig based on type $name
+    return $typeConfig;
+};
+
+$contents = file_get_contents('schema.graphql');
+$schema = BuildSchema::build($contents, $typeConfigDecorator);
+</code></pre>
+
 <h1 id="performance-considerations">Performance considerations</h1>
 <p>Since 0.10.0</p>
 <p>Method <strong>build()</strong> produces a <a href="../schema/#lazy-loading-of-types">lazy schema</a>

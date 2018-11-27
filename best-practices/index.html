@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Type Registry - graphql-php</title>
+  <title>Config Validation - graphql-php</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Type Registry";
+    var mkdocs_page_name = "Config Validation";
     var mkdocs_page_input_path = "best-practices.md";
     var mkdocs_page_url = null;
   </script>
@@ -166,7 +166,7 @@
     
       
     
-    <li>Type Registry</li>
+    <li>Config Validation</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -176,7 +176,14 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="type-registry">Type Registry</h1>
+                <h1 id="config-validation">Config Validation</h1>
+<p>Defining types using arrays may be error-prone, but <strong>graphql-php</strong> provides config validation
+tool to report when config has unexpected structure. </p>
+<p>This validation tool is <strong>disabled by default</strong> because it is time-consuming operation which only 
+makes sense during development.</p>
+<p>To enable validation - call: <code>GraphQL\Type\Definition\Config::enableValidation();</code> in your bootstrap
+but make sure to restrict it to debug/development mode only.</p>
+<h1 id="type-registry">Type Registry</h1>
 <p><strong>graphql-php</strong> expects that each type in Schema is presented by single instance. Therefore
 if you define your types as separate PHP classes you need to ensure that each type is referenced only once.</p>
 <p>Technically you can create several instances of your type (for example for tests), but <code>GraphQL\Type\Schema</code> 

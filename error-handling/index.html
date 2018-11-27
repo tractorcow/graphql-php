@@ -296,7 +296,7 @@ $result = GraphQL::executeQuery(/*args*/)-&gt;toArray($debug);
 ];
 </code></pre>
 
-<p>If you prefer first resolver exception to be re-thrown, use following flags:</p>
+<p>If you prefer the first resolver exception to be re-thrown, use following flags:</p>
 <pre><code class="php">&lt;?php
 use GraphQL\GraphQL;
 use GraphQL\Error\Debug;
@@ -306,6 +306,8 @@ $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::RETHROW_INTERNAL_EXCEPTIONS;
 $result = GraphQL::executeQuery(/*args*/)-&gt;toArray($debug); 
 </code></pre>
 
+<p>If you only want to re-throw Exceptions that are not marked as safe through the <code>ClientAware</code> interface, use
+the flag <code>Debug::RETHROW_UNSAFE_EXCEPTIONS</code>.</p>
 <h1 id="custom-error-handling-and-formatting">Custom Error Handling and Formatting</h1>
 <p>It is possible to define custom <strong>formatter</strong> and <strong>handler</strong> for result errors.</p>
 <p><strong>Formatter</strong> is responsible for converting instances of <a href="../reference/#graphqlerrorerror"><code>GraphQL\Error\Error</code></a> 
