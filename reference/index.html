@@ -445,7 +445,7 @@ static function listOf($wrappedType)
 </code></pre>
 
 <pre><code class="php">/**
- * @param ObjectType|InterfaceType|UnionType|ScalarType|InputObjectType|EnumType|ListOfType $wrappedType
+ * @param NullableType $wrappedType
  *
  * @return NonNull
  *
@@ -527,7 +527,7 @@ static function isType($type)
 <pre><code class="php">/**
  * @param Type $type
  *
- * @return ObjectType|InterfaceType|UnionType|ScalarType|InputObjectType|EnumType|ListOfType
+ * @return NullableType
  *
  * @api
  */
@@ -542,7 +542,7 @@ Passed as 3rd argument to every field resolver. See <a href="../data-fetching/">
  * The name of the field being resolved
  *
  * @api
- * @var string|null
+ * @var string
  */
 public $fieldName;
 
@@ -550,7 +550,7 @@ public $fieldName;
  * AST of all nodes referencing this field in the query.
  *
  * @api
- * @var FieldNode[]|null
+ * @var FieldNode[]
  */
 public $fieldNodes;
 
@@ -566,7 +566,7 @@ public $returnType;
  * Parent type of the field being resolved
  *
  * @api
- * @var ObjectType|null
+ * @var ObjectType
  */
 public $parentType;
 
@@ -574,7 +574,7 @@ public $parentType;
  * Path to this field from the very root value
  *
  * @api
- * @var string[]
+ * @var string[][]
  */
 public $path;
 
@@ -590,7 +590,7 @@ public $schema;
  * AST of all fragments defined in query
  *
  * @api
- * @var FragmentDefinitionNode[]|null
+ * @var FragmentDefinitionNode[]
  */
 public $fragments;
 
@@ -614,7 +614,7 @@ public $operation;
  * Array of variables passed to query execution
  *
  * @api
- * @var mixed[]|null
+ * @var mixed[]
  */
 public $variableValues;
 </code></pre>
@@ -1276,7 +1276,7 @@ const SCHEMA_EXTENSION = &quot;SchemaExtension&quot;;
  * execution are collected in `$result-&gt;errors`.
  *
  * @param mixed|null               $rootValue
- * @param mixed[]|null             $contextValue
+ * @param mixed|null               $contextValue
  * @param mixed[]|ArrayAccess|null $variableValues
  * @param string|null              $operationName
  *
@@ -1301,8 +1301,8 @@ static function execute(
  *
  * Useful for async PHP platforms.
  *
- * @param mixed[]|null $rootValue
- * @param mixed[]|null $contextValue
+ * @param mixed|null   $rootValue
+ * @param mixed|null   $contextValue
  * @param mixed[]|null $variableValues
  * @param string|null  $operationName
  *
@@ -2167,6 +2167,12 @@ public $operation;
  * @var mixed[]|null
  */
 public $variables;
+
+/**
+ * @api
+ * @var mixed[]|null
+ */
+public $extensions;
 </code></pre>
 
 <p><strong>Class Methods:</strong> </p>
