@@ -86,6 +86,6 @@ abstract class Node
             'start' => $this->loc->start,
             'end' => $this->loc->end
         ];
-        return json_encode($tmp);
+        return (string)json_encode($tmp);
     }
 }
